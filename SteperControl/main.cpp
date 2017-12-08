@@ -1,6 +1,6 @@
 #include <wiringPi.h>   ////Transforms Odroid into a very fast Arduino
 #include <stdio.h>
-#include <AccelStepper.h>
+#include "AccelStepper.h"
 
 
 
@@ -23,18 +23,7 @@ bool SX_END, SY_END, SZ_END;
 
 #define SJ_STEP         3       //  		15 
 #define SJ_DIR          2       //  		13
-
-
-
-
-
-
-
-
-
-
-
-				  
+			  
 
 int main(void)
 {
