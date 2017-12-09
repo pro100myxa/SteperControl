@@ -1,5 +1,5 @@
 #include <wiringPi.h>   ////Transforms Odroid into a very fast Arduino
-#include <stdio.h>
+//#include <stdio.h>
 #include "AccelStepper.h"
 
 
@@ -23,7 +23,41 @@ bool SX_END, SY_END, SZ_END;
 
 #define SJ_STEP         3       //  		15 
 #define SJ_DIR          2       //  		13
-			  
+
+void AccelStepperSetup() {
+	AccelStepper SX (SX_DIR, SX_STEP); //using 5 and 4 pins for direction and step, 1 - "external driver" mode (A4988) // Stepper X asix
+
+	SX.setMaxSpeed(1000); // set max speed of stepper motor (When driving, the stepper motor will accelerate to this maximum speed and slow down when approaching the end of the movement.)
+
+	SX.setAcceleration(100); //Set the acceleration, in steps per second
+
+	SX.setSpeed(100); //Set the speed in steps per second. The movement itself is started by runSpeed ().
+
+
+	AccelStepper SY (SX_DIR, SX_STEP); //Stepper Y asix
+
+	SY.setMaxSpeed(1000);
+
+	SY.setAcceleration(100);
+
+	SY.setSpeed(100);
+
+
+	AccelStepper SZ (SX_DIR, SX_STEP); //Stepper Z asix
+
+	SZ.setMaxSpeed(1000);
+
+	SZ.setAcceleration(100);
+
+	SZ.setSpeed(100);
+
+
+	AccelStepper SJ ( SX_DIR, SX_STEP); //Stepper jaws
+
+	SJ.setMaxSpeed(1000);
+
+	SJ.setSpeed(100);
+}
 
 int main(void)
 {
@@ -36,38 +70,7 @@ int main(void)
 
 	AccelStepperSetup();
 
-	AccelStepper SX(1, SX_DIR, SX_STEP); //using 5 and 4 pins for direction and step, 1 - "external driver" mode (A4988) // Stepper X asix
-
-	SX.setMaxSpeed(1000); // set max speed of stepper motor (When driving, the stepper motor will accelerate to this maximum speed and slow down when approaching the end of the movement.)
-
-	SX.setAcceleration(100); //Set the acceleration, in steps per second
-
-	SX.setSpeed(100); //Set the speed in steps per second. The movement itself is started by runSpeed ().
-
-
-	AccelStepper SY(1, SX_DIR, SX_STEP); //Stepper Y asix
-
-	SY.setMaxSpeed(stepsPerSecond);
-
-	SY.setAcceleration(stepsPerSecondSquared);
-
-	SY.setSpeed(stepsPerSecond);
-
-
-	AccelStepper SZ(1, SX_DIR, SX_STEP); //Stepper Z asix
-
-	SZ.setMaxSpeed(stepsPerSecond);
-
-	SZ.setAcceleration(stepsPerSecondSquared);
-
-	SZ.setSpeed(stepsPerSecond);
-
-
-	AccelStepper SJ(1, SX_DIR, SX_STEP); //Stepper jaws
-
-	SJ.setMaxSpeed(stepsPerSecond);
-
-	SJ.setSpeed(stepsPerSecond);
+	
 
 	//SX.runSpeed();
 

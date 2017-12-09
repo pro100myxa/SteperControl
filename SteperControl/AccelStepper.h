@@ -1,6 +1,6 @@
-
 // AccelStepper.h
-
+#include <wiringPi.h>   ////Transforms Odroid into a very fast Arduino
+#include <stdio.h>
 #ifndef AccelStepper_h
 #define AccelStepper_h
 
@@ -63,16 +63,9 @@ public:
 	/// to pin 4.
 	/// \param[in] pin4 Arduino digital pin number for motor pin 4. Defaults
 	/// to pin 5.
-	AccelStepper(int pins = 4, int pin1 = 2, int pin2 = 3, int pin3 = 4, int pin4 = 5);
+	AccelStepper(int pin1 = 2, int pin2 = 3);
 
-	/// Constructor. You can have multiple simultaneous steppers, all moving
-	/// at different speeds and accelerations, provided you call their run()
-	/// functions at frequent enough intervals. Current Position is set to 0, target
-	/// position is set to 0. MaxSpeed and Acceleration default to 1.0.
-	/// Any motor initialization should happen before hand, no pins are used or initialized.
-	/// \param[in] forward void-returning procedure that will make a forward step
-	/// \param[in] backward void-returning procedure that will make a backward step
-	AccelStepper(void(*forward)(), void(*backward)());
+
 
 	/// Set the target position. The run() function will try to move the motor
 	/// from the current position to the target position set by the most
@@ -158,17 +151,7 @@ public:
 	/// \param[in] position The new target position.
 	void    runToNewPosition(long position);
 
-	/// Disable motor pin outputs by setting them all LOW
-	/// Depending on the design of your electronics this may turn off
-	/// the power to the motor coils, saving power.
-	/// This is useful to support Arduino low power modes: disable the outputs
-	/// during sleep and then reenable with enableOutputs() before stepping
-	/// again.
-	void    disableOutputs();
-
-	/// Enable motor pin outputs by setting the motor pins to OUTPUT
-	/// mode. Called automatically by the constructor.
-	void    enableOutputs();
+	
 
 protected:
 
@@ -208,7 +191,7 @@ private:
 
 								   /// Arduino pin number for the 2 or 4 pins required to interface to the
 								   /// stepper motor.
-	int        _pin1, _pin2, _pin3, _pin4;
+	int        _pin1, _pin2;
 
 	/// The current absolution position in steps.
 	long           _currentPos;    // Steps
@@ -235,11 +218,7 @@ private:
 	/// The last step time in milliseconds
 	unsigned long  _lastStepTime;
 
-	// The pointer to a forward-step procedure
-	void(*_forward)();
-
-	// The pointer to a backward-step procedure
-	void(*_backward)();
+	
 };
 
 #endif 
