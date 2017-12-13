@@ -1,4 +1,4 @@
-#include <wiringPi.h>   ////Transforms Odroid into a very fast Arduino
+#include <wiringPi.h>////Transforms Odroid into a very fast Arduino
 //#include <stdio.h>
 #include "AccelStepper.h"
 
