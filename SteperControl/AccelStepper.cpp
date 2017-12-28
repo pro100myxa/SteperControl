@@ -92,7 +92,7 @@ float AccelStepper::desiredSpeed()
 	if (distanceTo == 0)
 		return 0.0; // Were there
 	else if (distanceTo > 0) // Clockwise
-		requiredSpeed = sqrt(2.0 * distanceTo * _acceleration);
+		requiredSpeed = (float)sqrt(2.0 * distanceTo * _acceleration);
 	else  // Anticlockwise
 		requiredSpeed = -sqrt(2.0 * -distanceTo * _acceleration);
 
@@ -116,7 +116,7 @@ float AccelStepper::desiredSpeed()
 		if (requiredSpeed < -_maxSpeed)
 			requiredSpeed = -_maxSpeed;
 	}
-	//  Serial.println(requiredSpeed);
+	
 	return requiredSpeed;
 }
 
