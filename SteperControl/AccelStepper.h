@@ -505,6 +505,8 @@ public:
 	/// Checks to see if the motor is currently running to a target
 	/// \return true if the speed is not zero or not at the target position
 	bool    isRunning();
+	float constrain(float val, float minval, float maxval);
+
 
 protected:
 
@@ -663,6 +665,7 @@ private:
 	/// Min step size in microseconds based on maxSpeed
 	float _cmin; // at max speed
 
+	
 };
 
 /// @example Random.pde

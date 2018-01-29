@@ -642,6 +642,18 @@ bool AccelStepper::isRunning()
 	return !(_speed == 0.0 && _targetPos == _currentPos);
 }
 
+float AccelStepper::constrain(float val, float minval, float maxval)
+{
+	if (val < minval) {
+		return minval;
+	}
+	else if (maxval < val) {
+		return maxval;
+	}
+	else
+		return val;
+}
+
 
 // Blocks until the new target position is reached
 void AccelStepper::runToNewPosition(long position)
