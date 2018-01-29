@@ -70,11 +70,11 @@ int main(void)
 	SX.setAcceleration(100); //Set the acceleration, in steps per second
 	SX.setSpeed(100); //Set the speed in steps per second. The movement itself is started by runSpeed ().
 	SX.move(positionX);
+	SX.run();
 	if (SX_END == 0) {
+		SX.stop();
 		SX.setCurrentPosition(0);
 	}
-	SX.run();
-	
 
 
 	AccelStepper SY(1, SX_DIR, SX_STEP); //Stepper Y asix
@@ -83,6 +83,10 @@ int main(void)
 	SY.setSpeed(100);
 	SY.move(positionY);
 	SY.run();
+	if (SY_END == 0) {
+		SY.stop();
+		SY.setCurrentPosition(0);
+	}
 
 	AccelStepper SZ(1, SX_DIR, SX_STEP); //Stepper Z asix
 	SZ.setMaxSpeed(1000);
@@ -90,6 +94,10 @@ int main(void)
 	SZ.setSpeed(100);
 	SZ.move(positionZ);
 	SZ.run();
+	if (SZ_END == 0) {
+		SZ.stop();
+		SZ.setCurrentPosition(0);
+	}
 
 	AccelStepper SJ(1, SX_DIR, SX_STEP); //Stepper jaws
 	SJ.setMaxSpeed(1000);

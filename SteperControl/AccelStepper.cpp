@@ -2,7 +2,7 @@
 #include "AccelStepper.h"
 #include <wiringPi.h>
 #include <math.h>
-#include <stdio.h>
+
 
 // AccelStepper.cpp
 //
