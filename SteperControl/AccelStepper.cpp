@@ -655,10 +655,3 @@ float AccelStepper::constrain(float val, float minval, float maxval)
 }
 
 
-// Blocks until the new target position is reached
-void AccelStepper::runToNewPosition(long position)
-{
-	moveTo(position);
-	runToPosition();
-}
-
