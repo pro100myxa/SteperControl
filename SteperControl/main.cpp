@@ -1,6 +1,7 @@
-﻿#include <wiringPi.h>////Transforms Odroid into a very fast Arduino
+﻿
+#include <wiringPi.h>////Transforms Odroid into a very fast Arduino
 //#include <stdio.h>
-#include "AccelStepper.h"
+//#include "AccelStepper.h"
 
 
 /*
@@ -64,52 +65,65 @@ int main(void)
 	pinMode(SX_END, INPUT); 			pinMode(SY_END, INPUT); 			pinMode(SZ_END, INPUT);
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	AccelStepper SX(1, SX_DIR, SX_STEP); //using 5 and 4 pins for direction and step, 1 - "external driver" mode (A4988) // Stepper X asix
+	/*
+	AccelStepper SX(1, SX_STEP, SX_DIR); //using 5 and 4 pins for direction and step, 1 - "external driver" mode (A4988) // Stepper X asix
 	SX.setMaxSpeed(1000); // set max speed of stepper motor (When driving, the stepper motor will accelerate to this maximum speed and slow down when approaching the end of the movement.)
 	SX.setAcceleration(100); //Set the acceleration, in steps per second
 	SX.setSpeed(100); //Set the speed in steps per second. The movement itself is started by runSpeed ().
-	SX.move(positionX);
-	SX.run();
-	if (SX_END == 0) {
-		SX.stop();
-		SX.setCurrentPosition(0);
-	}
+	//SX.move(100);
+	//SX.run();
+	//if (SX_END == 1) {
+	//	SX.stop();
+	//	SX.setCurrentPosition(0);
+	//}
 
 
-	AccelStepper SY(1, SX_DIR, SX_STEP); //Stepper Y asix
+	AccelStepper SY(1, SY_STEP, SY_DIR); //Stepper Y asix
 	SY.setMaxSpeed(1000);
 	SY.setAcceleration(100);
 	SY.setSpeed(100);
-	SY.move(positionY);
-	SY.run();
-	if (SY_END == 0) {
-		SY.stop();
-		SY.setCurrentPosition(0);
-	}
+	//SY.move(100);
+	//SY.run();
+	//if (SY_END == 1) {
+	//	SY.stop();
+	//	SY.setCurrentPosition(0);
+	//}
 
-	AccelStepper SZ(1, SX_DIR, SX_STEP); //Stepper Z asix
+	AccelStepper SZ(1, SZ_STEP, SZ_DIR); //Stepper Z asix
 	SZ.setMaxSpeed(1000);
 	SZ.setAcceleration(100);
 	SZ.setSpeed(100);
-	SZ.move(positionZ);
-	SZ.run();
-	if (SZ_END == 0) {
-		SZ.stop();
-		SZ.setCurrentPosition(0);
-	}
+	//SZ.move(100);
+	//SZ.run();
+	//if (SZ_END == 1) {
+	//	SZ.stop();
+	//	SZ.setCurrentPosition(0);
+	//}
 
-	AccelStepper SJ(1, SX_DIR, SX_STEP); //Stepper jaws
+	AccelStepper SJ(1, SJ_STEP, SJ_DIR); //Stepper jaws
 	SJ.setMaxSpeed(1000);
 	SJ.setSpeed(100);
-	SJ.move(positionJ);
-	SJ.run();
+	//SJ.move(100);
+	//SJ.run();
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	*/
 	
+	
+	int X_STEP = 20;
 
-	
-	
+	digitalWrite(SX_DIR, HIGH);
 
+
+		int i = 0;
+		while (i <  X_STEP)  //крутим двигатель 
+
+			i++;
+			digitalWrite(SX_STEP, HIGH);
+			delay(1000);
+			digitalWrite(SX_STEP, LOW);
+			delay(1000);
+		
+	
 
 
 	return 0;
