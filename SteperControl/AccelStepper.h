@@ -401,7 +401,7 @@ public:
 	/// \param[in] acceleration The desired acceleration in steps per second
 	/// per second. Must be > 0.0. This is an expensive call since it requires a square 
 	/// root to be calculated. Dont call more ofthen than needed
-	void    setAcceleration(float acceleration);
+	void    setAcceleration(double acceleration);
 
 	/// Sets the desired constant speed for use with runSpeed().
 	/// \param[in] speed The desired constant speed in steps per
@@ -413,7 +413,7 @@ public:
 
 	/// The most recently set speed
 	/// \return the most recent speed in steps per second
-	float   speed();
+	double   speed();
 
 	/// The distance from the current position to the target position.
 	/// \return the distance from the current position to the target position
@@ -615,19 +615,19 @@ private:
 
 								   /// The current motos speed in steps per second
 								   /// Positive is clockwise
-	float          _speed;         // Steps per second
+	double          _speed;         // Steps per second
 
 								   /// The maximum permitted speed in steps per second. Must be > 0.
 	float          _maxSpeed;
 
 	/// The acceleration to use to accelerate or decelerate the motor in steps
 	/// per second per second. Must be > 0
-	float          _acceleration;
+	double          _acceleration;
 	float          _sqrt_twoa; // Precomputed sqrt(2*_acceleration)
 
 							   /// The current interval between steps in microseconds.
 							   /// 0 means the motor is currently stopped with _speed == 0
-	unsigned long  _stepInterval;
+	double  _stepInterval;
 
 	/// The last step time in microseconds
 	unsigned long  _lastStepTime;
@@ -654,72 +654,18 @@ private:
 	void(*_backward)();
 
 	/// The step counter for speed calculations
-	long _n;
+	double _n;
 
 	/// Initial step size in microseconds
-	float _c0;
+	double _c0;
 
 	/// Last step size in microseconds
-	float _cn;
+	double _cn;
 
 	/// Min step size in microseconds based on maxSpeed
-	float _cmin; // at max speed
+	double _cmin; // at max speed
 
 	
 };
-
-/// @example Random.pde
-/// Make a single stepper perform random changes in speed, position and acceleration
-
-/// @example Overshoot.pde
-///  Check overshoot handling
-/// which sets a new target position and then waits until the stepper has 
-/// achieved it. This is used for testing the handling of overshoots
-
-/// @example MultipleSteppers.pde
-/// Shows how to multiple simultaneous steppers
-/// Runs one stepper forwards and backwards, accelerating and decelerating
-/// at the limits. Runs other steppers at the same time
-
-/// @example ConstantSpeed.pde
-/// Shows how to run AccelStepper in the simplest,
-/// fixed speed mode with no accelerations
-
-/// @example Blocking.pde 
-/// Shows how to use the blocking call runToNewPosition
-/// Which sets a new target position and then waits until the stepper has 
-/// achieved it.
-
-/// @example AFMotor_MultiStepper.pde
-/// Control both Stepper motors at the same time with different speeds
-/// and accelerations. 
-
-/// @example AFMotor_ConstantSpeed.pde
-/// Shows how to run AccelStepper in the simplest,
-/// fixed speed mode with no accelerations
-
-/// @example ProportionalControl.pde
-/// Make a single stepper follow the analog value read from a pot or whatever
-/// The stepper will move at a constant speed to each newly set posiiton, 
-/// depending on the value of the pot.
-
-/// @example Bounce.pde
-/// Make a single stepper bounce from one limit to another, observing
-/// accelrations at each end of travel
-
-/// @example Quickstop.pde
-/// Check stop handling.
-/// Calls stop() while the stepper is travelling at full speed, causing
-/// the stepper to stop as quickly as possible, within the constraints of the
-/// current acceleration.
-
-/// @example MotorShield.pde
-/// Shows how to use AccelStepper to control a 3-phase motor, such as a HDD spindle motor
-/// using the Adafruit Motor Shield http://www.ladyada.net/make/mshield/index.html.
-
-/// @example DualMotorShield.pde
-/// Shows how to use AccelStepper to control 2 x 2 phase steppers using the 
-/// Itead Studio Arduino Dual Stepper Motor Driver Shield
-/// model IM120417015
 
 #endif 

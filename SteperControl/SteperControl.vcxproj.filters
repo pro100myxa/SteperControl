@@ -2,9 +2,9 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="AccelStepper.cpp" />
+    <ClCompile Include="LibStepper.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AccelStepper.h" />
+    <ClInclude Include="LibStepper.h" />
   </ItemGroup>
 </Project>

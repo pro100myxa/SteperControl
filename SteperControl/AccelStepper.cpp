@@ -1,7 +1,9 @@
 
 #include "AccelStepper.h"
 #include <wiringPi.h>
-#include <math.h>
+#include <cmath.>
+
+
 
 
 // AccelStepper.cpp
@@ -154,7 +156,7 @@ void AccelStepper::computeNewSpeed()
 	_speed = 1000000.0 / _cn;
 	if (_direction == DIRECTION_CCW)
 		_speed = -_speed;
-
+/*
 #if 0
 	Serial.println(_speed);
 	Serial.println(_acceleration);
@@ -166,6 +168,7 @@ void AccelStepper::computeNewSpeed()
 	Serial.println(stepsToStop);
 	Serial.println("-----");
 #endif
+*/
 }
 
 // Run the motor to implement speed and acceleration in order to proceed to the target position
@@ -269,7 +272,7 @@ float   AccelStepper::maxSpeed()
 	return _maxSpeed;
 }
 
-void AccelStepper::setAcceleration(float acceleration)
+void AccelStepper::setAcceleration(double acceleration)
 {
 	if (acceleration == 0.0)
 		return;
@@ -301,7 +304,7 @@ void AccelStepper::setSpeed(float speed)
 	_speed = speed;
 }
 
-float AccelStepper::speed()
+double AccelStepper::speed()
 {
 	return _speed;
 }
