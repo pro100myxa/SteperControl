@@ -1,6 +1,7 @@
 ﻿
-#include <wiringPi.h>////Transforms Odroid into a very fast Arduino
+#include <wiringPi.h>
 #include "LibStepper.h"
+
 
 
 
@@ -27,39 +28,37 @@ int positionX, positionY, positionZ, positionJ;
 #define SJ_DIR          2       //  		13
 
 
-int main(void)
-{
+void setup() {
+	
 	wiringPiSetup();
 
 	pinMode(SX_STEP, OUTPUT);       	pinMode(SY_STEP, OUTPUT);       	pinMode(SZ_STEP, OUTPUT); 		pinMode(SJ_STEP, OUTPUT);
 	pinMode(SX_DIR, OUTPUT);		 	pinMode(SY_DIR, OUTPUT);		 	pinMode(SZ_DIR, OUTPUT); 		pinMode(SJ_DIR, OUTPUT);
 	pinMode(SX_END, INPUT); 			pinMode(SY_END, INPUT); 			pinMode(SZ_END, INPUT);
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
 
 	
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+}
+
+void loop() {
+	
+	    LibStepper SJ(SJ_STEP, SJ_DIR);
+		SJ.speed(600);
+		SJ.moveTo(30);
+											 
+		
 	
 	
-	
-	
+}
 
 
+int main(void)
+{
+	setup();
+	while (1)
+		loop();
 
-	LibStepper SJ(SJ_STEP, SJ_DIR);
-	SJ.speed(600);
-	SJ.moveTo(-30);
-	
+	return 0;
 
-
-
-
-
-
-
-	
-
-
-    return 0;
 }
