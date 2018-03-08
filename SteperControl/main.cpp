@@ -1,7 +1,8 @@
 ﻿
 #include <wiringPi.h>
 #include "LibStepper.h"
-
+#include <wiringPiI2C.h>
+#include <wiringSerial.h>
 
 
 
