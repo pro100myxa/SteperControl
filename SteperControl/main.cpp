@@ -1,15 +1,15 @@
 ﻿
+#include <wiringPiSPI.h>
 #include <wiringPi.h>
 #include "LibStepper.h"
-#include <wiringPiI2C.h>
-#include <wiringSerial.h>
+#include "RF24.h"
 
 
 
 
 
-bool SX_END, SY_END, SZ_END;
-int positionX, positionY, positionZ, positionJ;
+
+
 
 
 //					WiringPI			Shifter-sheld      
@@ -29,27 +29,56 @@ int positionX, positionY, positionZ, positionJ;
 #define SJ_DIR          2       //  		13
 
 
+
+unsigned int recieved_data[4];
+unsigned char address[][6] = { "1Node", "2Node", "3Node", "4Node", "5Node", "6Node" };
+
+
+
 void setup() {
-	
+
 	wiringPiSetup();
+
+	RF24 radio(7, 10);
 
 	pinMode(SX_STEP, OUTPUT);       	pinMode(SY_STEP, OUTPUT);       	pinMode(SZ_STEP, OUTPUT); 		pinMode(SJ_STEP, OUTPUT);
 	pinMode(SX_DIR, OUTPUT);		 	pinMode(SY_DIR, OUTPUT);		 	pinMode(SZ_DIR, OUTPUT); 		pinMode(SJ_DIR, OUTPUT);
 	pinMode(SX_END, INPUT); 			pinMode(SY_END, INPUT); 			pinMode(SZ_END, INPUT);
 
-	
 
-	
+
+	radio.begin(); //активировать модуль
+	radio.setAutoAck(1);         //режим подтверждения приёма, 1 вкл 0 выкл
+	radio.setRetries(0, 15);    //(время между попыткой достучаться, число попыток)
+	radio.enableAckPayload();    //разрешить отсылку данных в ответ на входящий сигнал
+	radio.setPayloadSize(32);     //размер пакета, в байтах
+
+	radio.openReadingPipe(1, address[0]);     //хотим слушать трубу 0
+	radio.setChannel(0x60);  //выбираем канал (в котором нет шумов!)
+
+	radio.setPALevel(RF24_PA_MAX); //уровень мощности передатчика. На выбор RF24_PA_MIN, RF24_PA_LOW, RF24_PA_HIGH, RF24_PA_MAX
+	radio.setDataRate(RF24_250KBPS); //скорость обмена. На выбор RF24_2MBPS, RF24_1MBPS, RF24_250KBPS
+									 //должна быть одинакова на приёмнике и передатчике!
+									 //при самой низкой скорости имеем самую высокую чувствительность и дальность!!
+
+	radio.powerUp(); //начать работу
+	radio.startListening();  //начинаем слушать эфир, мы приёмный модуль
+
+	unsigned char pipeNo;
+	while (radio.available(&pipeNo)) {  // слушаем эфир со всех труб
+		radio.read(&recieved_data, sizeof(recieved_data));
+
+	}
 }
 
 void loop() {
 	
-	    LibStepper SJ(SJ_STEP, SJ_DIR);
+	      // чиатем входящий сигнал
+
+	LibStepper SJ(SJ_STEP, SJ_DIR);
 		SJ.speed(600);
-		SJ.moveTo(30);
+		SJ.moveTo(-30);
 											 
-		
-	
 	
 }
 

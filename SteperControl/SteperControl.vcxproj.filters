@@ -3,8 +3,40 @@
   <ItemGroup>
     <ClCompile Include="LibStepper.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="RF24.cpp">
+      <Filter>RF24</Filter>
+    </ClCompile>
+    <ClCompile Include="spi.cpp">
+      <Filter>RF24</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LibStepper.h" />
+    <ClInclude Include="nRF24L01.h">
+      <Filter>RF24</Filter>
+    </ClInclude>
+    <ClInclude Include="printf.h">
+      <Filter>RF24</Filter>
+    </ClInclude>
+    <ClInclude Include="RF24.h">
+      <Filter>RF24</Filter>
+    </ClInclude>
+    <ClInclude Include="RF24_config.h">
+      <Filter>RF24</Filter>
+    </ClInclude>
+    <ClInclude Include="includes.h">
+      <Filter>RF24</Filter>
+    </ClInclude>
+    <ClInclude Include="RF24_arch_config.h">
+      <Filter>RF24</Filter>
+    </ClInclude>
+    <ClInclude Include="spi.h">
+      <Filter>RF24</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="RF24">
+      <UniqueIdentifier>{25e84c3b-dfba-4fcb-b72a-6052c7613052}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>
