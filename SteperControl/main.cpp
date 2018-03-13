@@ -39,7 +39,7 @@ void setup() {
 
 	wiringPiSetup();
 
-	RF24 radio(7, 10);
+	RF24 radio(7, 10, 8000000);
 
 	pinMode(SX_STEP, OUTPUT);       	pinMode(SY_STEP, OUTPUT);       	pinMode(SZ_STEP, OUTPUT); 		pinMode(SJ_STEP, OUTPUT);
 	pinMode(SX_DIR, OUTPUT);		 	pinMode(SY_DIR, OUTPUT);		 	pinMode(SZ_DIR, OUTPUT); 		pinMode(SJ_DIR, OUTPUT);
