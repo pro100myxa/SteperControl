@@ -4,14 +4,6 @@
 #include "LibStepper.h"
 #include "RF24.h"
 
-
-
-
-
-
-
-
-
 //					WiringPI			Shifter-sheld      
 #define SX_STEP         4       //    		16
 #define SX_DIR          5       // 		    18
@@ -33,20 +25,18 @@
 unsigned int recieved_data[4];
 unsigned char address[][6] = { "1Node", "2Node", "3Node", "4Node", "5Node", "6Node" };
 
+RF24 radio(10, 7, 16000000);
 
 
 void setup() {
 
 	wiringPiSetup();
 
-	RF24 radio(7, 10, 8000000);
-
-	pinMode(SX_STEP, OUTPUT);       	pinMode(SY_STEP, OUTPUT);       	pinMode(SZ_STEP, OUTPUT); 		pinMode(SJ_STEP, OUTPUT);
+	/*pinMode(SX_STEP, OUTPUT);       	pinMode(SY_STEP, OUTPUT);       	pinMode(SZ_STEP, OUTPUT); 		pinMode(SJ_STEP, OUTPUT);
 	pinMode(SX_DIR, OUTPUT);		 	pinMode(SY_DIR, OUTPUT);		 	pinMode(SZ_DIR, OUTPUT); 		pinMode(SJ_DIR, OUTPUT);
 	pinMode(SX_END, INPUT); 			pinMode(SY_END, INPUT); 			pinMode(SZ_END, INPUT);
-
-
-
+*/
+	
 	radio.begin(); //активировать модуль
 	radio.setAutoAck(1);         //режим подтверждения приёма, 1 вкл 0 выкл
 	radio.setRetries(0, 15);    //(время между попыткой достучаться, число попыток)
@@ -63,23 +53,24 @@ void setup() {
 
 	radio.powerUp(); //начать работу
 	radio.startListening();  //начинаем слушать эфир, мы приёмный модуль
-
-	unsigned char pipeNo;
-	while (radio.available(&pipeNo)) {  // слушаем эфир со всех труб
-		radio.read(&recieved_data, sizeof(recieved_data));
-
-	}
 }
 
 void loop() {
 	
-	      // чиатем входящий сигнал
+	//LibStepper SJ(SJ_STEP, SJ_DIR);
+	/*	SJ.speed(600);
+		SJ.moveTo(-30);*/
 
-	LibStepper SJ(SJ_STEP, SJ_DIR);
-		SJ.speed(600);
-		SJ.moveTo(-30);
-											 
-	
+
+	unsigned char pipeNo;
+	while (radio.available(&pipeNo)) {  // слушаем эфир со всех труб
+		radio.read(&recieved_data, sizeof(recieved_data));         // чиатем входящий сигнал
+
+		int sx = recieved_data[0];
+		int _speed = 300;
+
+		printf("SX %d", sx);
+	}
 }
 
 
