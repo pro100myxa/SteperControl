@@ -3,7 +3,7 @@
 class LibStepper
 {
 public:
-	LibStepper(int step_pin, int dir_pin);
+	LibStepper(int step_pin, int dir_pin, int end_pin = 0);
 	
 	void speed(int set_speed);
 	
@@ -23,9 +23,12 @@ private:
 
 	int	_step;
 
-	bool _dir;
+	int _dir;
 
+	int _end;
 
+	int _endDir;
 
+	bool _endPressed;
 };
 
