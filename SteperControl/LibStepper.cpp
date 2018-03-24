@@ -20,6 +20,10 @@ void LibStepper::speed(int set_speed)
 
 void LibStepper::moveTo(int position)
 {
+	unsigned long time = micros();
+	if (time > _lastStepTime + _speed) 
+	{
+
 	if (position == 0)
 	{
 		return;
@@ -56,7 +60,7 @@ void LibStepper::moveTo(int position)
 					printf("Ender fire: %d\n", _end);
 					return;
 				}
-				
+
 			}
 			else
 			{
@@ -66,9 +70,11 @@ void LibStepper::moveTo(int position)
 
 		i++;
 		digitalWrite(_step, HIGH);
-		delayMicroseconds(_speed);
+		delayMicroseconds(100);
 		digitalWrite(_step, LOW);
-		delayMicroseconds(_speed);
+		//delayMicroseconds(_speed);
+	}
+	_lastStepTime = time;
 	}
 }
 

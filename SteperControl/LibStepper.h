@@ -30,5 +30,7 @@ private:
 	int _endDir;
 
 	bool _endPressed;
+
+	unsigned long _lastStepTime;
 };
 
