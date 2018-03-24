@@ -83,7 +83,7 @@ void loop() {
 			
 
 			int sx = recieved_data[0];
-			int _speed = 200;
+			int _speed = 20;
 			if (sx < 100)
 			{
 				
