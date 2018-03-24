@@ -83,19 +83,19 @@ void loop() {
 			
 
 			int sx = recieved_data[0];
-			int _speed = 200;
-			if (sx < 100)
+			int _speed = 20;
+			if (sx < 1)
 			{
 				
 				//digitalWrite(SX_DIR, LOW);
-				sx = -100;
+				sx = -1;
 				// _speed = _speed / 2;
 			}
 
 			else if (sx > 140)
 			{
 				//digitalWrite(SX_DIR, HIGH);
-				sx = 100;
+				sx = 1;
 				// _speed = _speed / 2;
 			}
 
@@ -103,17 +103,17 @@ void loop() {
 
 
 			int sy = recieved_data[3];
-			if (sy < 100)
+			if (sy < 1)
 			{
 				//digitalWrite(SY_DIR, LOW);
-				sy = -100;
+				sy = -1;
 				// _speed = _speed / 2;
 			}
 
 			else if (sy > 140)
 			{
 				//digitalWrite(SY_DIR, HIGH);
-				sy = 100;
+				sy = 1;
 				//  _speed = _speed / 2;
 			}
 
@@ -121,17 +121,17 @@ void loop() {
 
 
 			int sz = recieved_data[1];
-			if (sz < 100)
+			if (sz < 1)
 			{
 				//digitalWrite(SZ_DIR, LOW);
-				sz = -100;
+				sz = -1;
 				// _speed = _speed / 2;
 			}
 
 			else if (sz > 140)
 			{
 				//digitalWrite(SZ_DIR, HIGH);
-				sz = 100;
+				sz = 1;
 				// _speed = _speed / 2;
 			}
 
@@ -139,10 +139,10 @@ void loop() {
 
 
 			int sj = recieved_data[2];
-			if (sj < 100)
+			if (sj < 1)
 			{
 				//digitalWrite(SJ_DIR, LOW);
-				sj = -100;
+				sj = -1;
 				// _speed = _speed / 2;
 
 			}
@@ -150,13 +150,13 @@ void loop() {
 			else if (sj > 140)
 			{
 				//digitalWrite(SJ_DIR, HIGH);
-				sj = 100;
+				sj = 1;
 				// _speed = _speed / 2;
 			}
 
 			else sj = 0;
 
-			SX.speed(400);
+			SX.speed(_speed);
 			SY.speed(_speed);
 			SZ.speed(_speed);
 			SJ.speed(_speed);

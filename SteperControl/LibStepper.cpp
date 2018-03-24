@@ -20,56 +20,63 @@ void LibStepper::speed(int set_speed)
 
 void LibStepper::moveTo(int position)
 {
-	if (position == 0)
+	unsigned long time = micros();
+	if (time > _lastStepTime + _speed)
 	{
-		return;
-	}
 
-	_targetPos = position;
-	if (_targetPos < 0)
-	{
-		//_targetPos = ~_targetPos + 1;
-		digitalWrite(_dir, LOW);
-	}
-	else digitalWrite(_dir, HIGH);
-
-	int i = 0;
-	while (i < fabs(_targetPos))
-	{
-		if (_end != 0)
+		if (position == 0)
 		{
-			int endVal = digitalRead(_end);
-			if (endVal == LOW)
+			return;
+		}
+
+		_targetPos = position;
+		if (_targetPos < 0)
+		{
+			//_targetPos = ~_targetPos + 1;
+			digitalWrite(_dir, LOW);
+		}
+		else digitalWrite(_dir, HIGH);
+
+		int i = 0;
+		while (i < fabs(_targetPos))
+		{
+			if (_end != 0)
 			{
-				if (_endPressed)
+				int endVal = digitalRead(_end);
+				if (endVal == LOW)
 				{
-					if (_endDir == digitalRead(_dir))
+					if (_endPressed)
 					{
-						printf("Ender blocked: %d\n", _end);
+						if (_endDir == digitalRead(_dir))
+						{
+							printf("Ender blocked: %d\n", _end);
+							return;
+						}
+					}
+					else
+					{
+						_endPressed = true;
+						_endDir = digitalRead(_dir);
+						printf("Ender fire: %d\n", _end);
 						return;
 					}
+
 				}
 				else
 				{
-					_endPressed = true;
-					_endDir = digitalRead(_dir);
-					printf("Ender fire: %d\n", _end);
-					return;
+					_endPressed = false;
 				}
-				
 			}
-			else
-			{
-				_endPressed = false;
-			}
-		}
 
-		i++;
-		digitalWrite(_step, HIGH);
-		delayMicroseconds(_speed);
-		digitalWrite(_step, LOW);
-		delayMicroseconds(_speed);
+			i++;
+			digitalWrite(_step, HIGH);
+			delayMicroseconds(100);
+			digitalWrite(_step, LOW);
+			//delayMicroseconds(_speed);
+		}
+		_lastStepTime = time;
 	}
+}
 }
 
 
