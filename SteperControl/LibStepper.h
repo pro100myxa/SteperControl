@@ -1,36 +1,25 @@
 #pragma once
 #include <wiringPi.h>
-class LibStepper
+#include <pthread.h>
+#include "AccelStepper/AccelStepper.h"
+
+class LibStepper : public AccelStepper
 {
 public:
-	LibStepper(int step_pin, int dir_pin, int end_pin = 0);
-	
-	void speed(int set_speed);
-	
-	void moveTo(int position);
+	LibStepper(int step_pin, int dir_pin, int terminal_pin = 0);
 
 protected:
-
+	void step(uint8_t step);
 	
-
 private:
 
-	int	_currentPos;
+	// Stores terminal pin.
+	int _terminalPin;
 
-	int	_targetPos;
+	// Stores stepper direction in time of terminal fire.
+	int _terminalPressedDir;
 
-	int	_speed;
-
-	int	_step;
-
-	int _dir;
-
-	int _end;
-
-	int _endDir;
-
-	bool _endPressed;
-
-	unsigned long _lastStepTime;
+	// Stores value indicating where terminal was pressed.
+	bool _terminalPressed;
 };
 

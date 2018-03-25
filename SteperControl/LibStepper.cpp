@@ -2,83 +2,46 @@
 #include <wiringPi.h>
 #include <math.h>
 #include <stdio.h>
+#include <pthread.h>
 
-LibStepper::LibStepper(int step_pin, int dir_pin, int end_pin)
+LibStepper::LibStepper(int step_pin, int dir_pin, int terminal_pin) : AccelStepper(1, step_pin, dir_pin)
 {
-	_currentPos = 0;
-	_targetPos = 0;
-	_speed = 0;
-	_step = step_pin;
-	_dir = dir_pin;
-	_end = end_pin;
+	_terminalPin = terminal_pin;
 }
 
-void LibStepper::speed(int set_speed)
+void LibStepper::step(uint8_t step)
 {
-	_speed = set_speed;
-}
-
-void LibStepper::moveTo(int position)
-{
-	unsigned long time = micros();
-	if (time > _lastStepTime + _speed)
+	if (_terminalPin != 0)
 	{
-
-		if (position == 0)
+		int endVal = digitalRead(_terminalPin);
+		if (endVal == LOW)
 		{
-			return;
-		}
-
-		_targetPos = position;
-		if (_targetPos < 0)
-		{
-			//_targetPos = ~_targetPos + 1;
-			digitalWrite(_dir, LOW);
-		}
-		else digitalWrite(_dir, HIGH);
-
-		int i = 0;
-		while (i < fabs(_targetPos))
-		{
-			if (_end != 0)
+			if (_terminalPressed)
 			{
-				int endVal = digitalRead(_end);
-				if (endVal == LOW)
+				if (_terminalPressedDir == (int)(speed() > 0))
 				{
-					if (_endPressed)
-					{
-						if (_endDir == digitalRead(_dir))
-						{
-							printf("Ender blocked: %d\n", _end);
-							return;
-						}
-					}
-					else
-					{
-						_endPressed = true;
-						_endDir = digitalRead(_dir);
-						printf("Ender fire: %d\n", _end);
-						return;
-					}
-
-				}
-				else
-				{
-					_endPressed = false;
+#if DEBUG
+					printf("Ender blocked: %d\n", _terminalPin);
+#endif
+					return;
 				}
 			}
+			else
+			{
+				_terminalPressed = true;
+				_terminalPressedDir = (int)(speed() > 0);
+#if DEBUG
+				printf("Ender fire: %d\n", _terminalPin);
+#endif
+				return;
+			}
 
-			i++;
-			digitalWrite(_step, HIGH);
-			delayMicroseconds(100);
-			digitalWrite(_step, LOW);
-			//delayMicroseconds(_speed);
 		}
-		_lastStepTime = time;
+		else
+		{
+			_terminalPressed = false;
+		}
 	}
+
+	AccelStepper::step(step);
 }
-
-
-
-
-
