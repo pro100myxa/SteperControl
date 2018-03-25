@@ -77,7 +77,6 @@ void LibStepper::moveTo(int position)
 		_lastStepTime = time;
 	}
 }
-}
 
 
 
