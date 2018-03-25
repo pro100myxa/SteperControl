@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <pthread.h>
 
-LibStepper::LibStepper(int step_pin, int dir_pin, int terminal_pin) : AccelStepper(1, step_pin, dir_pin)
+LibStepper::LibStepper(int step_pin, int dir_pin, int terminal_pin) : AccelStepper(AccelStepper::DRIVER, step_pin, dir_pin)
 {
 	_terminalPin = terminal_pin;
 }

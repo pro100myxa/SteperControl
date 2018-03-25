@@ -57,10 +57,14 @@ void setup() {
 	radio.startListening();  //начинаем слушать эфир, мы приёмный модуль
 
 	int speed = 200;
-	SX.setSpeed(speed);
-	SY.setSpeed(speed);
-	SZ.setSpeed(speed);
-	SJ.setSpeed(speed);
+	SX.setMinPulseWidth(200);
+	SY.setMinPulseWidth(200);
+	SZ.setMinPulseWidth(200);
+	SJ.setMinPulseWidth(200);
+	SX.setMaxSpeed(speed);
+	SY.setMaxSpeed(speed);
+	SZ.setMaxSpeed(speed);
+	SJ.setMaxSpeed(speed);
 }
 
 int getDelta(unsigned char val)
@@ -77,7 +81,8 @@ int getDelta(unsigned char val)
 }
 
 void loop() {
-	
+	int speed = 200;
+
 	// чиатем входящий сигнал
 	unsigned char pipeNo;
 	while (radio.available(&pipeNo)) {  // слушаем эфир со всех труб
@@ -88,21 +93,24 @@ void loop() {
 		int sz = getDelta(recieved_data[1]);
 		int sj = getDelta(recieved_data[2]);
 
-		SX.move(sx);
-		SY.move(sy);
-		SZ.move(sz);
-		SJ.move(sj);
+		SX.move(sx*speed);
+		SY.move(sy*speed);
+		SZ.move(sz*speed);
+		SJ.move(sj*speed);
 
-		SX.run();
-		SY.run();
-		SZ.run();
-		SJ.run();
+		while (SX.run() || SY.run() || SZ.run() || SJ.run())
+		{
+		};
 	}
 }
 
 int main(void)
 {
 	setup();
+
+	SJ.move(100);
+	SJ.runToPosition();
+
 	while (1)
 		loop();
 
