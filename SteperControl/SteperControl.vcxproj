@@ -84,12 +84,14 @@
     </RemotePostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AccelStepper\AccelStepper.cpp" />
     <ClCompile Include="LibStepper.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="RF24.cpp" />
     <ClCompile Include="spi.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AccelStepper\AccelStepper.h" />
     <ClInclude Include="includes.h" />
     <ClInclude Include="LibStepper.h" />
     <ClInclude Include="nRF24L01.h" />

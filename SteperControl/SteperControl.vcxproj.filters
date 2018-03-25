@@ -9,6 +9,9 @@
     <ClCompile Include="spi.cpp">
       <Filter>RF24</Filter>
     </ClCompile>
+    <ClCompile Include="AccelStepper\AccelStepper.cpp">
+      <Filter>AccelStepper</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LibStepper.h" />
@@ -33,10 +36,16 @@
     <ClInclude Include="spi.h">
       <Filter>RF24</Filter>
     </ClInclude>
+    <ClInclude Include="AccelStepper\AccelStepper.h">
+      <Filter>AccelStepper</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="RF24">
       <UniqueIdentifier>{25e84c3b-dfba-4fcb-b72a-6052c7613052}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AccelStepper">
+      <UniqueIdentifier>{6568733b-ad10-408f-a2c8-091309fdc10f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
