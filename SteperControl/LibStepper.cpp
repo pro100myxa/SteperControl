@@ -7,9 +7,14 @@
 LibStepper::LibStepper(int step_pin, int dir_pin, int terminal_pin) : AccelStepper(AccelStepper::DRIVER, step_pin, dir_pin)
 {
 	_terminalPin = terminal_pin;
+
+	if (_terminalPin > 0)
+	{
+		pinMode(_terminalPin, INPUT);
+	}
 }
 
-void LibStepper::step(uint8_t step)
+void LibStepper::step(long step)
 {
 	if (_terminalPin != 0)
 	{
@@ -44,4 +49,7 @@ void LibStepper::step(uint8_t step)
 	}
 
 	AccelStepper::step(step);
+#if DEBUG
+	printf("Step was done\n");
+#endif
 }

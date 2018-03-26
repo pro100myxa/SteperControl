@@ -9,7 +9,7 @@ public:
 	LibStepper(int step_pin, int dir_pin, int terminal_pin = 0);
 
 protected:
-	void step(uint8_t step);
+	void step(long step);
 	
 private:
 
