@@ -51,20 +51,21 @@ boolean AccelStepper::runSpeed()
     if (   ((nextStepTime >= _lastStepTime) && ((time >= nextStepTime) || (time < _lastStepTime)))
 	|| ((nextStepTime < _lastStepTime) && ((time >= nextStepTime) && (time < _lastStepTime))))
     {
-	if (_direction == DIRECTION_CW)
-	{
-	    // Clockwise
-	    _currentPos += 1;
-	}
-	else
-	{
-	    // Anticlockwise  
-	    _currentPos -= 1;
-	}
-	step(_currentPos);
+		if (_direction == DIRECTION_CW)
+		{
+			// Clockwise
+			_currentPos += 1;
+		}
+		else
+		{
+			// Anticlockwise  
+			_currentPos -= 1;
+		}
 
-	_lastStepTime = time;
-	return true;
+		step(_currentPos);
+
+		_lastStepTime = time;
+		return true;
     }
     else
     {
@@ -160,8 +161,8 @@ void AccelStepper::computeNewSpeed()
 	_cn = fmax(_cn, _cmin); 
     }
     _n++;
-    _stepInterval = _cn;
-    _speed = 1000000.0 / _cn;
+    _stepInterval = (unsigned long)_cn;
+    _speed = TIMER_FREQUENCY / _cn;
     if (_direction == DIRECTION_CCW)
 	_speed = -_speed;
 
@@ -262,7 +263,7 @@ void AccelStepper::setMaxSpeed(float speed)
     if (_maxSpeed != speed)
     {
 	_maxSpeed = speed;
-	_cmin = 1000000.0 / speed;
+	_cmin = TIMER_FREQUENCY / speed;
 	// Recompute _n from current speed and adjust speed if accelerating or cruising
 	if (_n > 0)
 	{
@@ -286,7 +287,7 @@ void AccelStepper::setAcceleration(float acceleration)
 	// Recompute _n per Equation 17
 	_n = _n * (_acceleration / acceleration);
 	// New c0 per Equation 7, with correction per Equation 15
-	_c0 = 0.676 * sqrt(2.0 / acceleration) * 1000000.0; // Equation 15
+	_c0 = 0.676 * sqrt(2.0 / acceleration) * TIMER_FREQUENCY; // Equation 15
 	_acceleration = acceleration;
 	computeNewSpeed();
     }
@@ -301,7 +302,7 @@ void AccelStepper::setSpeed(float speed)
 	_stepInterval = 0;
     else
     {
-	_stepInterval = fabs(1000000.0 / speed);
+	_stepInterval = fabs(TIMER_FREQUENCY / speed);
 	_direction = (speed > 0.0) ? DIRECTION_CW : DIRECTION_CCW;
     }
     _speed = speed;

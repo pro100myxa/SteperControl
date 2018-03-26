@@ -26,18 +26,19 @@ unsigned char address[][6] = { "1Node", "2Node", "3Node", "4Node", "5Node", "6No
 
 RF24 radio(10, 7);
 
-LibStepper SX(SX_STEP, SX_DIR, SX_END);
-LibStepper SY(SY_STEP, SY_DIR, SY_END);
-LibStepper SZ(SZ_STEP, SZ_DIR, SZ_END);
-LibStepper SJ(SJ_STEP, SJ_DIR, SJ_END);
+LibStepper* SX;
+LibStepper* SY;
+LibStepper* SZ;
+LibStepper* SJ;
 
 void setup() {
 
 	wiringPiSetup();
 
-	//pinMode(SX_STEP, OUTPUT);       	pinMode(SY_STEP, OUTPUT);       	pinMode(SZ_STEP, OUTPUT); 		pinMode(SJ_STEP, OUTPUT);
-	//pinMode(SX_DIR, OUTPUT);		 	pinMode(SY_DIR, OUTPUT);		 	pinMode(SZ_DIR, OUTPUT); 		pinMode(SJ_DIR, OUTPUT);
-	//pinMode(SX_END, INPUT); 			pinMode(SY_END, INPUT); 			pinMode(SZ_END, INPUT);			pinMode(SJ_END, INPUT);
+	SX = new LibStepper(SX_STEP, SX_DIR, SX_END);
+	SY = new LibStepper(SY_STEP, SY_DIR, SY_END);
+	SZ = new LibStepper(SZ_STEP, SZ_DIR, SZ_END);
+	SJ = new LibStepper(SJ_STEP, SJ_DIR, SJ_END);
 
 	radio.begin(); //активировать модуль
 	radio.setAutoAck(1);         //режим подтверждения приёма, 1 вкл 0 выкл
@@ -56,15 +57,10 @@ void setup() {
 	radio.powerUp(); //начать работу
 	radio.startListening();  //начинаем слушать эфир, мы приёмный модуль
 
-	int speed = 200;
-	SX.setMinPulseWidth(200);
-	SY.setMinPulseWidth(200);
-	SZ.setMinPulseWidth(200);
-	SJ.setMinPulseWidth(200);
-	SX.setMaxSpeed(speed);
-	SY.setMaxSpeed(speed);
-	SZ.setMaxSpeed(speed);
-	SJ.setMaxSpeed(speed);
+	SX->setMinPulseWidth(200);
+	SY->setMinPulseWidth(200);
+	SZ->setMinPulseWidth(200);
+	SJ->setMinPulseWidth(200);
 }
 
 int getDelta(unsigned char val)
@@ -93,24 +89,33 @@ void loop() {
 		int sz = getDelta(recieved_data[1]);
 		int sj = getDelta(recieved_data[2]);
 
-		SX.move(sx);
-		SY.move(sy);
-		SZ.move(sz);
-		SJ.move(sj);
+		SX->move(sx * 50);
+		SY->move(sy * 50);
+		SZ->move(sz * 50);
+		SJ->move(sj * 50);
 
-		while (SX.run() || SY.run() || SZ.run() || SJ.run())
-		{
-			delay(speed);
-		};
+		while (SX->run() || SY->run() || SZ->run() || SJ->run())
+			;
 	}
 }
 
 int main(void)
 {
+	printf("Program started\n");
+
 	setup();
 
-	SY.move(100);
-	SY.runToPosition();
+	/*int i = 0;
+	while (i < 1000)
+	{
+		digitalWrite(SY_DIR, HIGH);
+		digitalWrite(SY_STEP, HIGH);
+		delayMicroseconds(150);
+		digitalWrite(SY_STEP, LOW);
+		i++;
+	}*/
+	SY->move(100);
+	SY->runToPosition();
 
 	while (1)
 		loop();

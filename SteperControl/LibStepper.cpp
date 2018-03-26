@@ -25,9 +25,7 @@ void LibStepper::step(long step)
 			{
 				if (_terminalPressedDir == (int)(speed() > 0))
 				{
-#if DEBUG
 					printf("Ender blocked: %d\n", _terminalPin);
-#endif
 					return;
 				}
 			}
@@ -35,9 +33,7 @@ void LibStepper::step(long step)
 			{
 				_terminalPressed = true;
 				_terminalPressedDir = (int)(speed() > 0);
-#if DEBUG
 				printf("Ender fire: %d\n", _terminalPin);
-#endif
 				return;
 			}
 
@@ -49,7 +45,5 @@ void LibStepper::step(long step)
 	}
 
 	AccelStepper::step(step);
-#if DEBUG
 	printf("Step was done\n");
-#endif
 }

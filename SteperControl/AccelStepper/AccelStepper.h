@@ -210,9 +210,11 @@
 #include <stdlib.h>
 #if ARDUINO >= 100
 #include <Arduino.h>
+#define TIMER_FREQUENCY 1000000.0
 #else
 #include <wiringPi.h>
 #include <stdint.h>
+#define TIMER_FREQUENCY 500.0
 typedef bool boolean;
 #include <iostream>
 
