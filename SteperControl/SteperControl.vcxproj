@@ -85,7 +85,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AccelStepper\AccelStepper.cpp" />
-    <ClCompile Include="LibStepper.cpp" />
+    <ClCompile Include="TerminalableStepper.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="RF24.cpp" />
     <ClCompile Include="spi.cpp" />
@@ -93,7 +93,7 @@
   <ItemGroup>
     <ClInclude Include="AccelStepper\AccelStepper.h" />
     <ClInclude Include="includes.h" />
-    <ClInclude Include="LibStepper.h" />
+    <ClInclude Include="TerminalableStepper.h" />
     <ClInclude Include="nRF24L01.h" />
     <ClInclude Include="printf.h" />
     <ClInclude Include="RF24.h" />

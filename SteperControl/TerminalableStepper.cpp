@@ -1,12 +1,12 @@
-#include "LibStepper.h"
 #include <wiringPi.h>
 #include <math.h>
 #include <stdio.h>
 #include <pthread.h>
+#include "TerminalableStepper.h"
 
-LibStepper::LibStepper(int step_pin, int dir_pin, int terminal_pin) : AccelStepper(AccelStepper::DRIVER, step_pin, dir_pin)
+TerminalableStepper::TerminalableStepper(int stepPin, int dirPin, int terminalPin) : AccelStepper(stepPin, dirPin)
 {
-	_terminalPin = terminal_pin;
+	_terminalPin = terminalPin;
 
 	if (_terminalPin > 0)
 	{
@@ -14,7 +14,7 @@ LibStepper::LibStepper(int step_pin, int dir_pin, int terminal_pin) : AccelStepp
 	}
 }
 
-void LibStepper::step(long step)
+void TerminalableStepper::step(long step)
 {
 	if (_terminalPin != 0)
 	{
@@ -45,5 +45,5 @@ void LibStepper::step(long step)
 	}
 
 	AccelStepper::step(step);
-	printf("Step was done\n");
+	printf("Step %d was done\n", step);
 }

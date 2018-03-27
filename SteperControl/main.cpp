@@ -1,6 +1,6 @@
 ﻿#include <wiringPiSPI.h>
 #include <wiringPi.h>
-#include "LibStepper.h"
+#include "TerminalableStepper.h"
 #include "RF24.h"
 
 //					WiringPI			Shifter-sheld      
@@ -26,19 +26,19 @@ unsigned char address[][6] = { "1Node", "2Node", "3Node", "4Node", "5Node", "6No
 
 RF24 radio(10, 7);
 
-LibStepper* SX;
-LibStepper* SY;
-LibStepper* SZ;
-LibStepper* SJ;
+TerminalableStepper* SX;
+TerminalableStepper* SY;
+TerminalableStepper* SZ;
+TerminalableStepper* SJ;
 
 void setup() {
 
 	wiringPiSetup();
 
-	SX = new LibStepper(SX_STEP, SX_DIR, SX_END);
-	SY = new LibStepper(SY_STEP, SY_DIR, SY_END);
-	SZ = new LibStepper(SZ_STEP, SZ_DIR, SZ_END);
-	SJ = new LibStepper(SJ_STEP, SJ_DIR, SJ_END);
+	SX = new TerminalableStepper(SX_STEP, SX_DIR, SX_END);
+	SY = new TerminalableStepper(SY_STEP, SY_DIR, SY_END);
+	SZ = new TerminalableStepper(SZ_STEP, SZ_DIR, SZ_END);
+	SJ = new TerminalableStepper(SJ_STEP, SJ_DIR, SJ_END);
 
 	radio.begin(); //активировать модуль
 	radio.setAutoAck(1);         //режим подтверждения приёма, 1 вкл 0 выкл

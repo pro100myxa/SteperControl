@@ -3,10 +3,10 @@
 #include <pthread.h>
 #include "AccelStepper/AccelStepper.h"
 
-class LibStepper : public AccelStepper
+class TerminalableStepper : public AccelStepper
 {
 public:
-	LibStepper(int step_pin, int dir_pin, int terminal_pin = 0);
+	TerminalableStepper(int step_pin, int dir_pin, int terminal_pin = 0);
 
 protected:
 	void step(long step);

@@ -1,7 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="LibStepper.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="RF24.cpp">
       <Filter>RF24</Filter>
@@ -12,9 +11,9 @@
     <ClCompile Include="AccelStepper\AccelStepper.cpp">
       <Filter>AccelStepper</Filter>
     </ClCompile>
+    <ClCompile Include="TerminalableStepper.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="LibStepper.h" />
     <ClInclude Include="nRF24L01.h">
       <Filter>RF24</Filter>
     </ClInclude>
@@ -39,6 +38,7 @@
     <ClInclude Include="AccelStepper\AccelStepper.h">
       <Filter>AccelStepper</Filter>
     </ClInclude>
+    <ClInclude Include="TerminalableStepper.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="RF24">
