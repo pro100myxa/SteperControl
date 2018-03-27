@@ -77,26 +77,19 @@ int getDelta(unsigned char val)
 }
 
 void loop() {
-	int speed = 200;
 
-	// чиатем входящий сигнал
-	unsigned char pipeNo;
-	while (radio.available(&pipeNo)) {  // слушаем эфир со всех труб
-		radio.read(&recieved_data, sizeof(recieved_data));
+	int sx = rand() % 2 == 1 ? 1 : -1;
+	int sy = rand() % 2 == 1 ? 1 : -1;
+	int sz = rand() % 2 == 1 ? 1 : -1;
+	int sj = rand() % 2 == 1 ? 1 : -1;
 
-		int sx = getDelta(recieved_data[0]);
-		int sy = getDelta(recieved_data[3]);
-		int sz = getDelta(recieved_data[1]);
-		int sj = getDelta(recieved_data[2]);
+	SX->move(sx * 20);
+	SY->move(sy * 20);
+	SZ->move(sz * 20);
+	SJ->move(sj * 5);
 
-		SX->move(sx * 50);
-		SY->move(sy * 50);
-		SZ->move(sz * 50);
-		SJ->move(sj * 50);
-
-		while (SX->run() || SY->run() || SZ->run() || SJ->run())
-			;
-	}
+	while (SX->run() || SY->run() || SZ->run() || SJ->run())
+		;
 }
 
 int main(void)
@@ -114,8 +107,6 @@ int main(void)
 		digitalWrite(SY_STEP, LOW);
 		i++;
 	}*/
-	SY->move(100);
-	SY->runToPosition();
 
 	while (1)
 		loop();

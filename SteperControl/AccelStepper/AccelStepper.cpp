@@ -10,6 +10,7 @@ void AccelStepper::moveTo(long absolute)
 {
     if (_targetPos != absolute)
     {
+		_direction = (absolute > _targetPos) ? DIRECTION_CW : DIRECTION_CCW;
 		_targetPos = absolute;
     }
 }
@@ -24,7 +25,7 @@ void AccelStepper::move(long relative)
 // returns true if a step occurred
 boolean AccelStepper::runSpeed()
 {
-    if (distanceToGo() > 0)
+    if (distanceToGo() != 0)
     {
 		if (_direction == DIRECTION_CW)
 		{
