@@ -31,6 +31,8 @@ void TerminalableStepper::step(long step)
 			}
 			else
 			{
+				// Stop movement
+				moveTo(currentPosition());
 				_terminalPressed = true;
 				_terminalPressedDir = (int)(speed() > 0);
 				printf("Ender fire: %d\n", _terminalPin);
@@ -46,4 +48,13 @@ void TerminalableStepper::step(long step)
 
 	AccelStepper::step(step);
 	printf("Step %d was done\n", step);
+}
+
+void TerminalableStepper::moveTillTerminal(bool direction)
+{
+	do 
+	{
+		move(direction ? 1 : -1);
+	}
+	while (run);
 }

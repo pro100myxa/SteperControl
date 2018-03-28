@@ -6,7 +6,9 @@
 class TerminalableStepper : public AccelStepper
 {
 public:
-	TerminalableStepper(int step_pin, int dir_pin, int terminal_pin = 0);
+	TerminalableStepper(int stepPin, int dirPin, int terminalPin = 0);
+	
+	void moveTillTerminal(bool direction);
 
 protected:
 	void step(long step);
