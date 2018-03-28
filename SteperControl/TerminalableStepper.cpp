@@ -56,5 +56,5 @@ void TerminalableStepper::moveTillTerminal(bool direction)
 	{
 		move(direction ? 1 : -1);
 	}
-	while (run);
+	while (run());
 }
