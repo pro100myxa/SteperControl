@@ -50,6 +50,11 @@ void TerminalableStepper::step(long step)
 	printf("Step %d was done\n", step);
 }
 
+bool TerminalableStepper::isTerminated()
+{
+	return _terminalPressed;
+}
+
 void TerminalableStepper::moveTillTerminal(bool direction)
 {
 	do 

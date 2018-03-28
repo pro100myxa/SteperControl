@@ -10,6 +10,7 @@ public:
 	
 	void moveTillTerminal(bool direction);
 
+	bool isTerminated();
 protected:
 	void step(long step);
 	
