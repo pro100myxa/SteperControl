@@ -60,6 +60,7 @@ void TerminalableStepper::moveTillTerminal(bool direction)
 	do 
 	{
 		move(direction ? 1 : -1);
+		run();
 	}
-	while (run());
+	while (!isTerminated());
 }
