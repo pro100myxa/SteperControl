@@ -57,10 +57,10 @@ void setup() {
 	radio.powerUp(); //начать работу
 	radio.startListening();  //начинаем слушать эфир, мы приёмный модуль
 
-	SX->setMinPulseWidth(200);
-	SY->setMinPulseWidth(200);
-	SZ->setMinPulseWidth(200);
-	SJ->setMinPulseWidth(200);
+	SX->setMinPulseWidth(550);
+	/*SY->setMinPulseWidth(150);
+	SZ->setMinPulseWidth(150);
+	SJ->setMinPulseWidth(150);*/
 }
 
 int getDelta(unsigned char val)
@@ -108,8 +108,13 @@ int main(void)
 		i++;
 	}*/
 
-	while (1)
-		loop();
+	SX->move(15*200);
+	SX->runToPosition();
+
+	//SX->moveTillTerminal(true);
+
+	/*while (1)
+		loop();*/
 
 	return 0;
 }

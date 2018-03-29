@@ -27,6 +27,15 @@ boolean AccelStepper::runSpeed()
 {
     if (distanceToGo() != 0)
     {
+		unsigned int time = micros();
+		if (time < _lastStepTime + 2 * _minPulseWidth)
+		{
+			return true;
+		}
+
+		_lastStepTime = time;
+		printf("step time: %d\n", time);
+
 		if (_direction == DIRECTION_CW)
 		{
 			// Clockwise
@@ -89,6 +98,7 @@ AccelStepper::AccelStepper(uint8_t stepPin, uint8_t dirPin, bool enable)
     _maxSpeed = 1.0;
     _minPulseWidth = 1;
     _enablePin = 0xff;
+	_lastStepTime = 0;
 
     // NEW
     _direction = DIRECTION_CCW;
@@ -134,9 +144,8 @@ void AccelStepper::step(long step)
 											 // step HIGH
 											 // Caution 200ns setup time 
 											 // Delay the minimum allowed pulse width
-	delayMicroseconds(_minPulseWidth);
+	delayMicroseconds(1);
 	digitalWrite(_stepPin, LOW);			 // step LOW
-	delayMicroseconds(_minPulseWidth);
 }
 
 // Prevents power consumption on the outputs

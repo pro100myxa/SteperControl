@@ -405,6 +405,8 @@ private:
 
     /// Current direction motor is spinning in
     boolean _direction; // 1 == CW
+
+	unsigned int  _lastStepTime;
 };
 
 #endif 
