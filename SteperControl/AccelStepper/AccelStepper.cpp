@@ -132,6 +132,11 @@ unsigned int AccelStepper::pulsePeriod()
 	return _pulsePeriod;
 }
 
+bool AccelStepper::direction()
+{
+	return _direction;
+}
+
 // Subclasses can override
 void AccelStepper::step(long step)
 {

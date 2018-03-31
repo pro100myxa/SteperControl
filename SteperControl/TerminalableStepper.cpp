@@ -23,7 +23,7 @@ void TerminalableStepper::step(long step)
 		{
 			if (_terminalPressed)
 			{
-				if (_terminalPressedDir == (int)(speed() > 0))
+				if (_terminalPressedDir == direction())
 				{
 					printf("Stepper %d: Ender blocked: %d\n", stepPin(), _terminalPin);
 					return;
@@ -34,7 +34,7 @@ void TerminalableStepper::step(long step)
 				// Stop movement
 				moveTo(currentPosition());
 				_terminalPressed = true;
-				_terminalPressedDir = (int)(speed() > 0);
+				_terminalPressedDir = direction();
 				printf("Stepper %d: Ender fire: %d\n", stepPin(), _terminalPin);
 				return;
 			}

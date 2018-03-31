@@ -133,6 +133,8 @@ public:
     /// \sa setPinsInverted
     void    setEnablePin(uint8_t enablePin = 0xff);
 
+	bool direction();
+
 	uint8_t stepPin();
 
 	uint8_t directionPin();

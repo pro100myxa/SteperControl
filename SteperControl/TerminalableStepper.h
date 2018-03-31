@@ -20,7 +20,7 @@ private:
 	int _terminalPin;
 
 	// Stores stepper direction in time of terminal fire.
-	int _terminalPressedDir;
+	bool _terminalPressedDir;
 
 	// Stores value indicating where terminal was pressed.
 	bool _terminalPressed;
