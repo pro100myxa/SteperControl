@@ -28,7 +28,7 @@ boolean AccelStepper::runSpeed()
     if (distanceToGo() != 0)
     {
 		unsigned int time = micros();
-		if (time < _lastStepTime + 2 * _minPulseWidth)
+		if (time < _lastStepTime + _pulsePeriod)
 		{
 			return true;
 		}
@@ -84,7 +84,7 @@ void AccelStepper::setCurrentPosition(long position)
 boolean AccelStepper::run()
 {
     if (runSpeed())
-    return _speed != 0.0 || distanceToGo() != 0;
+    return distanceToGo() != 0;
 }
 
 AccelStepper::AccelStepper(uint8_t stepPin, uint8_t dirPin, bool enable)
@@ -93,9 +93,7 @@ AccelStepper::AccelStepper(uint8_t stepPin, uint8_t dirPin, bool enable)
 	_dirPin = dirPin;
     _currentPos = 0;
     _targetPos = 0;
-    _speed = 0.0;
-    _maxSpeed = 1.0;
-    _minPulseWidth = 1;
+	setEgineFrequency(1000);
     _enablePin = 0xff;
 	_lastStepTime = 0;
 
@@ -106,33 +104,32 @@ AccelStepper::AccelStepper(uint8_t stepPin, uint8_t dirPin, bool enable)
 		enableOutputs();
 }
 
-void AccelStepper::setMaxSpeed(float speed)
+void AccelStepper::setEgineFrequency(unsigned int frequency)
 {
-    if (_maxSpeed != speed)
-    {
-		_maxSpeed = speed;
-    }
+	_engineFrequency = frequency;
+	_pulsePeriod = 1000000 / frequency;
 }
 
-float AccelStepper::maxSpeed()
+unsigned int AccelStepper::engineFrequency()
 {
-    return _maxSpeed;
+	return _engineFrequency;
 }
 
-void AccelStepper::setSpeed(float speed)
+void AccelStepper::setPulsePeriod(unsigned int waitInterval)
 {
-    if (speed == _speed)
-        return;
-
-    speed = constrain(speed, -_maxSpeed, _maxSpeed);
-
-	_direction = (speed > 0.0) ? DIRECTION_CW : DIRECTION_CCW;
-    _speed = speed;
+	if (_engineFrequency < 1000000 / _engineFrequency)
+	{
+		_pulsePeriod = 1000000 / _engineFrequency;
+	}
+	else
+	{
+		_pulsePeriod = waitInterval;
+	}
 }
 
-float AccelStepper::speed()
+unsigned int AccelStepper::pulsePeriod()
 {
-    return _speed;
+	return _pulsePeriod;
 }
 
 // Subclasses can override
@@ -166,11 +163,6 @@ void    AccelStepper::enableOutputs()
         pinMode(_enablePin, OUTPUT);
         digitalWrite(_enablePin, HIGH ^ _enableInverted);
     }
-}
-
-void AccelStepper::setMinPulseWidth(unsigned int minWidth)
-{
-    _minPulseWidth = minWidth;
 }
 
 void AccelStepper::setEnablePin(uint8_t enablePin)

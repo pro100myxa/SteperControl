@@ -61,10 +61,10 @@ void setup() {
 	radio.powerUp(); //начать работу
 	radio.startListening();  //начинаем слушать эфир, мы приёмный модуль
 
-	SX->setMinPulseWidth(550);
-	SY->setMinPulseWidth(550);
-	SZ->setMinPulseWidth(550);
-	SJ->setMinPulseWidth(300);
+	SX->setEgineFrequency(1000);
+	SY->setEgineFrequency(1000);
+	SZ->setEgineFrequency(1000);
+	SJ->setEgineFrequency(1600);
 }
 
 int getDelta(unsigned char val)
