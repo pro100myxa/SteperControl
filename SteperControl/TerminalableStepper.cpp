@@ -25,7 +25,7 @@ void TerminalableStepper::step(long step)
 			{
 				if (_terminalPressedDir == (int)(speed() > 0))
 				{
-					printf("Ender blocked: %d\n", _terminalPin);
+					printf("Stepper %d: Ender blocked: %d\n", stepPin(), _terminalPin);
 					return;
 				}
 			}
@@ -35,7 +35,7 @@ void TerminalableStepper::step(long step)
 				moveTo(currentPosition());
 				_terminalPressed = true;
 				_terminalPressedDir = (int)(speed() > 0);
-				printf("Ender fire: %d\n", _terminalPin);
+				printf("Stepper %d: Ender fire: %d\n", stepPin(), _terminalPin);
 				return;
 			}
 
@@ -47,7 +47,7 @@ void TerminalableStepper::step(long step)
 	}
 
 	AccelStepper::step(step);
-	printf("Step %d was done\n", step);
+	printf("Stepper %d: Step %d was done\n", stepPin(), step);
 }
 
 bool TerminalableStepper::isTerminated()

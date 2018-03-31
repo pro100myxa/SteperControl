@@ -34,7 +34,6 @@ boolean AccelStepper::runSpeed()
 		}
 
 		_lastStepTime = time;
-		printf("step time: %d\n", time);
 
 		if (_direction == DIRECTION_CW)
 		{
@@ -215,4 +214,14 @@ void AccelStepper::stop()
 {
 	digitalWrite(_dirPin, LOW);
 	digitalWrite(_stepPin, LOW);
+}
+
+uint8_t AccelStepper::stepPin()
+{
+	return _stepPin;
+}
+
+uint8_t AccelStepper::directionPin()
+{
+	return _dirPin;
 }

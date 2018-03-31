@@ -7,18 +7,22 @@
 #define SX_STEP         4       //    		16
 #define SX_DIR          5       // 		    18
 #define SX_END          6       //    		22
+#define SX_RATIO        50
 
 #define SY_STEP         11      //   		26
 #define SY_DIR          26      //    		32
 #define SY_END          27  	//			36
+#define SY_RATIO        50
 
 #define SZ_STEP         23		//  		33   
 #define SZ_DIR          22      //    		31 
 #define SZ_END          21		//			29
+#define SZ_RATIO        50
 
 #define SJ_STEP         3       //  		15 
 #define SJ_DIR          2       //  		13
 #define SJ_END          30		//			27
+#define SJ_RATIO        1
 
 
 unsigned char recieved_data[4];
@@ -58,9 +62,9 @@ void setup() {
 	radio.startListening();  //начинаем слушать эфир, мы приёмный модуль
 
 	SX->setMinPulseWidth(550);
-	/*SY->setMinPulseWidth(150);
-	SZ->setMinPulseWidth(150);
-	SJ->setMinPulseWidth(150);*/
+	SY->setMinPulseWidth(550);
+	SZ->setMinPulseWidth(550);
+	SJ->setMinPulseWidth(300);
 }
 
 int getDelta(unsigned char val)
@@ -78,18 +82,32 @@ int getDelta(unsigned char val)
 
 void loop() {
 
-	int sx = rand() % 2 == 1 ? 1 : -1;
-	int sy = rand() % 2 == 1 ? 1 : -1;
-	int sz = rand() % 2 == 1 ? 1 : -1;
-	int sj = rand() % 2 == 1 ? 1 : -1;
+	unsigned char pipeNo;
+	while (radio.available(&pipeNo)) {  // слушаем эфир со всех труб
+		radio.read(&recieved_data, sizeof(recieved_data));
 
-	SX->move(sx * 20);
-	SY->move(sy * 20);
-	SZ->move(sz * 20);
-	SJ->move(sj * 5);
+		int sx = getDelta(recieved_data[0])*SX_RATIO;
+		int sy = getDelta(recieved_data[1])*SY_RATIO;
+		int sz = getDelta(recieved_data[2])*SZ_RATIO;
+		int sj = getDelta(recieved_data[3])*SJ_RATIO;
 
-	while (SX->run() || SY->run() || SZ->run() || SJ->run())
-		;
+		SX->move(sx);
+		SY->move(sy);
+		SZ->move(sz);
+		SJ->move(sj);
+
+		bool sxRun = false;
+		bool syRun = false;
+		bool szRun = false;
+		bool sjRun = false;
+		do
+		{
+			sxRun = SX->run();
+			syRun = SY->run();
+			szRun = SZ->run();
+			sjRun = SJ->run();
+		} while (sxRun || syRun || szRun || sjRun);
+	}
 }
 
 int main(void)
@@ -98,23 +116,8 @@ int main(void)
 
 	setup();
 
-	/*int i = 0;
-	while (i < 1000)
-	{
-		digitalWrite(SY_DIR, HIGH);
-		digitalWrite(SY_STEP, HIGH);
-		delayMicroseconds(150);
-		digitalWrite(SY_STEP, LOW);
-		i++;
-	}*/
-
-	SX->move(15*200);
-	SX->runToPosition();
-
-	//SX->moveTillTerminal(true);
-
-	/*while (1)
-		loop();*/
+	while (1)
+		loop();
 
 	return 0;
 }

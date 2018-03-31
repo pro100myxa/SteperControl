@@ -362,6 +362,9 @@ public:
     /// \sa setPinsInverted
     void    setEnablePin(uint8_t enablePin = 0xff);
 
+	uint8_t stepPin();
+
+	uint8_t directionPin();
 protected:
 
     /// \brief Direction indicator
