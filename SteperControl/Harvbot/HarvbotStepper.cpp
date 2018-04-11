@@ -1,29 +1,45 @@
-// AccelStepper.cpp
-//
-// Copyright (C) 2009-2013 Mike McCauley
-// $Id: AccelStepper.cpp,v 1.20 2015/08/25 02:22:45 mikem Exp mikem $
-
 #include <math.h>
-#include "AccelStepper.h"
+#include "HarvbotStepper.h"
 
-void AccelStepper::moveTo(long absolute)
+HarvbotStepper::HarvbotStepper(uint8_t stepPin, uint8_t dirPin, unsigned int frequency, bool enable)
+{
+	_stepPin = stepPin;
+	_dirPin = dirPin;
+	_currentPos = 0;
+	_targetPos = 0;
+	setEngineFrequency(frequency);
+	_enablePin = 0xff;
+	_lastStepTime = 0;
+
+	// NEW
+	_direction = DIRECTION_CCW;
+
+	if (enable)
+		enableOutputs();
+}
+
+void HarvbotStepper::moveTo(long absolute)
 {
     if (_targetPos != absolute)
     {
 		_direction = (absolute > _targetPos) ? DIRECTION_CW : DIRECTION_CCW;
+
+		unsigned int time = 0;
+		do
+		{
+			time = micros();
+		} while (time < _lastStepTime + _pulsePeriod);
+
 		_targetPos = absolute;
     }
 }
 
-void AccelStepper::move(long relative)
+void HarvbotStepper::move(long relative)
 {
     moveTo(_currentPos + relative);
 }
 
-// Implements steps according to the current step interval
-// You must call this at least once per step
-// returns true if a step occurred
-boolean AccelStepper::runSpeed()
+bool HarvbotStepper::runSpeed()
 {
     if (distanceToGo() != 0)
     {
@@ -55,67 +71,44 @@ boolean AccelStepper::runSpeed()
     }
 }
 
-long AccelStepper::distanceToGo()
+long HarvbotStepper::distanceToGo()
 {
     return _targetPos - _currentPos;
 }
 
-long AccelStepper::targetPosition()
+long HarvbotStepper::targetPosition()
 {
     return _targetPos;
 }
 
-long AccelStepper::currentPosition()
+long HarvbotStepper::currentPosition()
 {
     return _currentPos;
 }
 
-// Useful during initialisations or after initial positioning
-// Sets speed to 0
-void AccelStepper::setCurrentPosition(long position)
+void HarvbotStepper::setCurrentPosition(long position)
 {
     _targetPos = _currentPos = position;
 }
 
-// Run the motor to implement speed and acceleration in order to proceed to the target position
-// You must call this at least once per step, preferably in your main loop
-// If the motor is in the desired position, the cost is very small
-// returns true if the motor is still running to the target position.
-boolean AccelStepper::run()
+bool HarvbotStepper::run()
 {
     if (runSpeed())
     return distanceToGo() != 0;
 }
 
-AccelStepper::AccelStepper(uint8_t stepPin, uint8_t dirPin, bool enable)
-{
-	_stepPin = stepPin;
-	_dirPin = dirPin;
-    _currentPos = 0;
-    _targetPos = 0;
-	setEgineFrequency(1000);
-    _enablePin = 0xff;
-	_lastStepTime = 0;
-
-    // NEW
-    _direction = DIRECTION_CCW;
-
-    if (enable)
-		enableOutputs();
-}
-
-void AccelStepper::setEgineFrequency(unsigned int frequency)
+void HarvbotStepper::setEngineFrequency(unsigned int frequency)
 {
 	_engineFrequency = frequency;
 	_pulsePeriod = 1000000 / frequency;
 }
 
-unsigned int AccelStepper::engineFrequency()
+unsigned int HarvbotStepper::engineFrequency()
 {
 	return _engineFrequency;
 }
 
-void AccelStepper::setPulsePeriod(unsigned int waitInterval)
+void HarvbotStepper::setPulsePeriod(unsigned int waitInterval)
 {
 	if (_engineFrequency < 1000000 / _engineFrequency)
 	{
@@ -127,30 +120,27 @@ void AccelStepper::setPulsePeriod(unsigned int waitInterval)
 	}
 }
 
-unsigned int AccelStepper::pulsePeriod()
+unsigned int HarvbotStepper::pulsePeriod()
 {
 	return _pulsePeriod;
 }
 
-bool AccelStepper::direction()
+bool HarvbotStepper::direction()
 {
 	return _direction;
 }
 
 // Subclasses can override
-void AccelStepper::step(long step)
+void HarvbotStepper::step(long step)
 {
 	digitalWrite(_dirPin, _direction ? HIGH : LOW);
 	digitalWrite(_stepPin, HIGH);			 // Set direction first else get rogue pulses
-											 // step HIGH
-											 // Caution 200ns setup time 
-											 // Delay the minimum allowed pulse width
 	delayMicroseconds(1);
 	digitalWrite(_stepPin, LOW);			 // step LOW
 }
 
 // Prevents power consumption on the outputs
-void    AccelStepper::disableOutputs()
+void HarvbotStepper::disableOutputs()
 {   
 	digitalWrite(_dirPin, LOW);
 	digitalWrite(_stepPin, LOW);
@@ -158,7 +148,7 @@ void    AccelStepper::disableOutputs()
         digitalWrite(_enablePin, LOW ^ _enableInverted);
 }
 
-void    AccelStepper::enableOutputs()
+void HarvbotStepper::enableOutputs()
 {
     pinMode(_dirPin, OUTPUT);
     pinMode(_stepPin, OUTPUT);
@@ -170,7 +160,7 @@ void    AccelStepper::enableOutputs()
     }
 }
 
-void AccelStepper::setEnablePin(uint8_t enablePin)
+void HarvbotStepper::setEnablePin(uint8_t enablePin)
 {
     _enablePin = enablePin;
 
@@ -183,13 +173,13 @@ void AccelStepper::setEnablePin(uint8_t enablePin)
 }
 
 // Blocks until the target position is reached and stopped
-void AccelStepper::runToPosition()
+void HarvbotStepper::runToPosition()
 {
     while (run())
 	;
 }
 
-boolean AccelStepper::runSpeedToPosition()
+bool HarvbotStepper::runSpeedToPosition()
 {
     if (_targetPos == _currentPos)
 	return false;
@@ -201,24 +191,25 @@ boolean AccelStepper::runSpeedToPosition()
 }
 
 // Blocks until the new target position is reached
-void AccelStepper::runToNewPosition(long position)
+void HarvbotStepper::runToNewPosition(long position)
 {
     moveTo(position);
     runToPosition();
 }
 
-void AccelStepper::stop()
+void HarvbotStepper::stop()
 {
+	_targetPos = _currentPos;
 	digitalWrite(_dirPin, LOW);
 	digitalWrite(_stepPin, LOW);
 }
 
-uint8_t AccelStepper::stepPin()
+uint8_t HarvbotStepper::stepPin()
 {
 	return _stepPin;
 }
 
-uint8_t AccelStepper::directionPin()
+uint8_t HarvbotStepper::directionPin()
 {
 	return _dirPin;
 }

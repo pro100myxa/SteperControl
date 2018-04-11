@@ -84,16 +84,16 @@
     </RemotePostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="AccelStepper\AccelStepper.cpp" />
-    <ClCompile Include="TerminalableStepper.cpp" />
+    <ClCompile Include="Harvbot\HarvbotStepper.cpp" />
+    <ClCompile Include="Harvbot\HarvbotTerminableStepper.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="RF24.cpp" />
     <ClCompile Include="spi.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AccelStepper\AccelStepper.h" />
+    <ClInclude Include="Harvbot\HarvbotStepper.h" />
+    <ClInclude Include="Harvbot\HarvbotTerminableStepper.h" />
     <ClInclude Include="includes.h" />
-    <ClInclude Include="TerminalableStepper.h" />
     <ClInclude Include="nRF24L01.h" />
     <ClInclude Include="printf.h" />
     <ClInclude Include="RF24.h" />

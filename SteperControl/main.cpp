@@ -1,28 +1,28 @@
 ﻿#include <wiringPiSPI.h>
 #include <wiringPi.h>
-#include "TerminalableStepper.h"
+#include "Harvbot/HarvbotStepper.h"
 #include "RF24.h"
 
 //					WiringPI			Shifter-sheld      
 #define SX_STEP         4       //    		16
 #define SX_DIR          5       // 		    18
 #define SX_END          6       //    		22
-#define SX_RATIO        50
+#define SX_RATIO        64
 
 #define SY_STEP         11      //   		26
 #define SY_DIR          26      //    		32
 #define SY_END          27  	//			36
-#define SY_RATIO        50
+#define SY_RATIO        64
 
 #define SZ_STEP         23		//  		33   
 #define SZ_DIR          22      //    		31 
 #define SZ_END          21		//			29
-#define SZ_RATIO        50
+#define SZ_RATIO        4
 
 #define SJ_STEP         3       //  		15 
 #define SJ_DIR          2       //  		13
 #define SJ_END          30		//			27
-#define SJ_RATIO        1
+#define SJ_RATIO        4
 
 
 unsigned char recieved_data[4];
@@ -30,19 +30,19 @@ unsigned char address[][6] = { "1Node", "2Node", "3Node", "4Node", "5Node", "6No
 
 RF24 radio(10, 7);
 
-TerminalableStepper* SX;
-TerminalableStepper* SY;
-TerminalableStepper* SZ;
-TerminalableStepper* SJ;
+HarvbotStepper* SX;
+HarvbotStepper* SY;
+HarvbotStepper* SZ;
+HarvbotStepper* SJ;
 
 void setup() {
 
 	wiringPiSetup();
 
-	SX = new TerminalableStepper(SX_STEP, SX_DIR, SX_END);
-	SY = new TerminalableStepper(SY_STEP, SY_DIR, SY_END);
-	SZ = new TerminalableStepper(SZ_STEP, SZ_DIR, SZ_END);
-	SJ = new TerminalableStepper(SJ_STEP, SJ_DIR, SJ_END);
+	SX = new HarvbotStepper(SX_STEP, SX_DIR, 4000);
+	SY = new HarvbotStepper(SY_STEP, SY_DIR, 4000);
+	SZ = new HarvbotStepper(SZ_STEP, SZ_DIR, 1000);
+	SJ = new HarvbotStepper(SJ_STEP, SJ_DIR, 1000);
 
 	radio.begin(); //активировать модуль
 	radio.setAutoAck(1);         //режим подтверждения приёма, 1 вкл 0 выкл
@@ -60,11 +60,6 @@ void setup() {
 
 	radio.powerUp(); //начать работу
 	radio.startListening();  //начинаем слушать эфир, мы приёмный модуль
-
-	SX->setEgineFrequency(1000);
-	SY->setEgineFrequency(1000);
-	SZ->setEgineFrequency(1000);
-	SJ->setEgineFrequency(1600);
 }
 
 int getDelta(unsigned char val)
@@ -78,6 +73,21 @@ int getDelta(unsigned char val)
 		return 1;
 	}
 	return val = 0;
+}
+
+void runAllEnginesTillPostions()
+{
+	bool sxRun = false;
+	bool syRun = false;
+	bool szRun = false;
+	bool sjRun = false;
+	do
+	{
+		sxRun = SX->run();
+		syRun = SY->run();
+		szRun = SZ->run();
+		sjRun = SJ->run();
+	} while (sxRun || syRun || szRun || sjRun);
 }
 
 void loop() {
@@ -96,19 +106,10 @@ void loop() {
 		SZ->move(sz);
 		SJ->move(sj);
 
-		bool sxRun = false;
-		bool syRun = false;
-		bool szRun = false;
-		bool sjRun = false;
-		do
-		{
-			sxRun = SX->run();
-			syRun = SY->run();
-			szRun = SZ->run();
-			sjRun = SJ->run();
-		} while (sxRun || syRun || szRun || sjRun);
+		runAllEnginesTillPostions();
 	}
 }
+
 
 int main(void)
 {
@@ -116,8 +117,27 @@ int main(void)
 
 	setup();
 
-	while (1)
-		loop();
+	SY->move(-1000 * SY_RATIO);
+	SX->move(-1000 * SY_RATIO);
+	runAllEnginesTillPostions();
 
+	//while (1)
+	//{
+	//	int numberOfSteps = 100;
+	//	//SX->move(-numberOfSteps * SX_RATIO);
+	//	//SX->move(-numberOfSteps * SJ_RATIO);
+	//	SY->move(-numberOfSteps * SY_RATIO);
+	//	//SZ->move(-numberOfSteps * SZ_RATIO);
+	//	runAllEnginesTillPostions();
+	//	//delay(5);
+	//	//SX->move(numberOfSteps * SX_RATIO);
+	//	SY->move(numberOfSteps * SY_RATIO);
+	//	//SZ->move(numberOfSteps * SZ_RATIO);
+	//	runAllEnginesTillPostions();
+	//}
+
+	/*while (1)
+		loop();
+*/
 	return 0;
 }

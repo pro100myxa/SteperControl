@@ -8,10 +8,12 @@
     <ClCompile Include="spi.cpp">
       <Filter>RF24</Filter>
     </ClCompile>
-    <ClCompile Include="AccelStepper\AccelStepper.cpp">
-      <Filter>AccelStepper</Filter>
+    <ClCompile Include="Harvbot\HarvbotStepper.cpp">
+      <Filter>Harvbot</Filter>
     </ClCompile>
-    <ClCompile Include="TerminalableStepper.cpp" />
+    <ClCompile Include="Harvbot\HarvbotTerminableStepper.cpp">
+      <Filter>Harvbot</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="nRF24L01.h">
@@ -35,17 +37,19 @@
     <ClInclude Include="spi.h">
       <Filter>RF24</Filter>
     </ClInclude>
-    <ClInclude Include="AccelStepper\AccelStepper.h">
-      <Filter>AccelStepper</Filter>
+    <ClInclude Include="Harvbot\HarvbotStepper.h">
+      <Filter>Harvbot</Filter>
     </ClInclude>
-    <ClInclude Include="TerminalableStepper.h" />
+    <ClInclude Include="Harvbot\HarvbotTerminableStepper.h">
+      <Filter>Harvbot</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="RF24">
       <UniqueIdentifier>{25e84c3b-dfba-4fcb-b72a-6052c7613052}</UniqueIdentifier>
     </Filter>
-    <Filter Include="AccelStepper">
-      <UniqueIdentifier>{6568733b-ad10-408f-a2c8-091309fdc10f}</UniqueIdentifier>
+    <Filter Include="Harvbot">
+      <UniqueIdentifier>{929452d0-4972-4317-a32a-30418946798b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

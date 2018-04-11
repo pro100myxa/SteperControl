@@ -2,11 +2,13 @@
 #include <math.h>
 #include <stdio.h>
 #include <pthread.h>
-#include "TerminalableStepper.h"
+#include "HarvbotTerminableStepper.h"
 
-TerminalableStepper::TerminalableStepper(int stepPin, int dirPin, int terminalPin) : AccelStepper(stepPin, dirPin)
+HarvbotTerminableStepper::HarvbotTerminableStepper(uint8_t stepPin, uint8_t dirPin, uint8_t terminalPin) : HarvbotStepper(stepPin, dirPin)
 {
 	_terminalPin = terminalPin;
+	_terminalPressed = false;
+	_terminalPressedDir = false;
 
 	if (_terminalPin > 0)
 	{
@@ -14,7 +16,7 @@ TerminalableStepper::TerminalableStepper(int stepPin, int dirPin, int terminalPi
 	}
 }
 
-void TerminalableStepper::step(long step)
+void HarvbotTerminableStepper::step(long step)
 {
 	if (_terminalPin != 0)
 	{
@@ -25,17 +27,17 @@ void TerminalableStepper::step(long step)
 			{
 				if (_terminalPressedDir == direction())
 				{
-					printf("Stepper %d: Ender blocked: %d\n", stepPin(), _terminalPin);
+					stop();
+					moveTo(currentPosition());
 					return;
 				}
 			}
 			else
 			{
 				// Stop movement
-				moveTo(currentPosition());
 				_terminalPressed = true;
 				_terminalPressedDir = direction();
-				printf("Stepper %d: Ender fire: %d\n", stepPin(), _terminalPin);
+				moveTo(currentPosition());
 				return;
 			}
 
@@ -46,16 +48,15 @@ void TerminalableStepper::step(long step)
 		}
 	}
 
-	AccelStepper::step(step);
-	printf("Stepper %d: Step %d was done\n", stepPin(), step);
+	HarvbotStepper::step(step);
 }
 
-bool TerminalableStepper::isTerminated()
+bool HarvbotTerminableStepper::isTerminated()
 {
 	return _terminalPressed;
 }
 
-void TerminalableStepper::moveTillTerminal(bool direction)
+void HarvbotTerminableStepper::runTillTerminal(bool direction)
 {
 	do 
 	{

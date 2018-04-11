@@ -1,14 +1,16 @@
-#pragma once
+#ifndef HarvbotTerminableStepper_h
+#define HarvbotTerminableStepper_h
+
 #include <wiringPi.h>
 #include <pthread.h>
-#include "AccelStepper/AccelStepper.h"
+#include "HarvbotStepper.h"
 
-class TerminalableStepper : public AccelStepper
+class HarvbotTerminableStepper : public HarvbotStepper
 {
 public:
-	TerminalableStepper(int stepPin, int dirPin, int terminalPin = 0);
+	HarvbotTerminableStepper(uint8_t stepPin, uint8_t dirPin, uint8_t terminalPin = 0);
 	
-	void moveTillTerminal(bool direction);
+	void runTillTerminal(bool direction);
 
 	bool isTerminated();
 protected:
@@ -25,4 +27,4 @@ private:
 	// Stores value indicating where terminal was pressed.
 	bool _terminalPressed;
 };
-
+#endif
