@@ -20,7 +20,7 @@ void LibStepper::speed(int set_speed)
 
 void LibStepper::moveTo(int position)
 {
-	unsigned long time = micros();
+	unsigned long time = counter();
 	if (time > _lastStepTime + _speed) 
 	{
 
@@ -70,12 +70,21 @@ void LibStepper::moveTo(int position)
 
 		i++;
 		digitalWrite(_step, HIGH);
-		delayMicroseconds(100);
+		delayMicroseconds(10);
 		digitalWrite(_step, LOW);
 		//delayMicroseconds(_speed);
 	}
 	_lastStepTime = time;
 	}
+}
+
+unsigned long LibStepper::counter()
+{
+	_counter++;
+	if (_counter > 4000000000) {
+		_counter = 0;
+	}
+	return _counter;
 }
 
 

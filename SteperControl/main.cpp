@@ -30,15 +30,21 @@
 #define SJ_END          30		//			27
 
 
+
+int _counter_;
+
 unsigned char recieved_data[4];
 unsigned char address[][6] = { "1Node", "2Node", "3Node", "4Node", "5Node", "6Node" };
 
 RF24 radio(10, 7);
 
 LibStepper SX(SX_STEP, SX_DIR, 0);
-LibStepper SY(SY_STEP, SY_DIR, SY_END);
-LibStepper SZ(SZ_STEP, SZ_DIR, SZ_END);
-LibStepper SJ(SJ_STEP, SJ_DIR, SJ_END);
+LibStepper SY(SY_STEP, SY_DIR, 0);
+LibStepper SZ(SZ_STEP, SZ_DIR, 0);
+LibStepper SJ(SJ_STEP, SJ_DIR, 0);
+
+
+
 
 void setup() {
 
@@ -49,9 +55,13 @@ void setup() {
 	pinMode(SX_STEP, OUTPUT);       	pinMode(SY_STEP, OUTPUT);       	pinMode(SZ_STEP, OUTPUT); 		pinMode(SJ_STEP, OUTPUT);
 	pinMode(SX_DIR, OUTPUT);		 	pinMode(SY_DIR, OUTPUT);		 	pinMode(SZ_DIR, OUTPUT); 		pinMode(SJ_DIR, OUTPUT);
 	pinMode(SX_END, INPUT); 			pinMode(SY_END, INPUT); 			pinMode(SZ_END, INPUT);			pinMode(SJ_END, INPUT);
+	
+
+	
 
 
 
+	
 	radio.begin(); //активировать модуль
 	radio.setAutoAck(1);         //режим подтверждения приёма, 1 вкл 0 выкл
 	radio.setRetries(0, 15);    //(время между попыткой достучаться, число попыток)
@@ -62,7 +72,7 @@ void setup() {
 	radio.setChannel(0x60);  //выбираем канал (в котором нет шумов!)
 
 	radio.setPALevel(RF24_PA_MAX); //уровень мощности передатчика. На выбор RF24_PA_MIN, RF24_PA_LOW, RF24_PA_HIGH, RF24_PA_MAX
-	radio.setDataRate(RF24_250KBPS); //скорость обмена. На выбор RF24_2MBPS, RF24_1MBPS, RF24_250KBPS
+	radio.setDataRate(RF24_2MBPS); //скорость обмена. На выбор RF24_2MBPS, RF24_1MBPS, RF24_250KBPS
 									 //должна быть одинакова на приёмнике и передатчике!
 									 //при самой низкой скорости имеем самую высокую чувствительность и дальность!!
 
@@ -83,8 +93,8 @@ void loop() {
 			
 
 			int sx = recieved_data[0];
-			int _speed = 20;
-			if (sx < 100)
+			int _speed = 2;
+			if (sx < 1)
 			{
 				
 				//digitalWrite(SX_DIR, LOW);
@@ -95,7 +105,7 @@ void loop() {
 			else if (sx > 140)
 			{
 				//digitalWrite(SX_DIR, HIGH);
-				sx = 1;
+				sx = 100;
 				// _speed = _speed / 2;
 			}
 
@@ -156,10 +166,16 @@ void loop() {
 
 			else sj = 0;
 
-			SX.speed(20);
-			SY.speed(20);
-			SZ.speed(20);
-			SJ.speed(20);
+			
+
+		
+			
+			
+
+			SX.speed(2);
+			SY.speed(2);
+			SZ.speed(2);
+			SJ.speed(2);
 			SX.moveTo(sx);
 			SY.moveTo(sy);
 			SZ.moveTo(sz);
@@ -170,6 +186,7 @@ void loop() {
 
 int main(void)
 {
+	
 	setup();
 	while (1)
 		loop();
@@ -177,3 +194,4 @@ int main(void)
 	return 0;
 
 }
+

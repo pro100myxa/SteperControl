@@ -9,6 +9,9 @@ public:
 	
 	void moveTo(int position);
 
+	unsigned long counter();
+
+
 protected:
 
 	
@@ -32,5 +35,7 @@ private:
 	bool _endPressed;
 
 	unsigned long _lastStepTime;
+
+	unsigned long _counter;
 };
 
