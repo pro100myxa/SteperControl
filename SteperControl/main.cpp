@@ -39,8 +39,8 @@ void setup() {
 
 	wiringPiSetup();
 
-	SX = new HarvbotStepper(SX_STEP, SX_DIR, 4000);
-	SY = new HarvbotStepper(SY_STEP, SY_DIR, 4000);
+	SX = new HarvbotStepper(SX_STEP, SX_DIR, 18000);
+	SY = new HarvbotStepper(SY_STEP, SY_DIR, 14000);
 	SZ = new HarvbotStepper(SZ_STEP, SZ_DIR, 1000);
 	SJ = new HarvbotStepper(SJ_STEP, SJ_DIR, 1000);
 
