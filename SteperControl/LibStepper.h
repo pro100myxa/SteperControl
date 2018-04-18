@@ -17,11 +17,19 @@ private:
 
 	int	_currentPos;
 
+
+
 	int	_targetPos;
+
+
 
 	int	_speed;
 
+
+
 	int	_step;
+
+
 
 	bool _dir;
 
