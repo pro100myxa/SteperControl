@@ -222,6 +222,9 @@ class VL53L0X {
 		 * Based on VL53L0X_perform_single_ref_calibration().
 		 */
 		bool performSingleRefCalibration(uint8_t vhvInitByte);
+
+	private :
+		unsigned int handle;
 };
 
 #endif

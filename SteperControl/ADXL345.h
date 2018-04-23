@@ -96,7 +96,6 @@ public:
                          // see error code for details
   byte error_code;       // Initial state
   double gains[3];        // counts to Gs
-  unsigned int handle;
 
   ADXL345();
   void powerOn();
@@ -195,6 +194,8 @@ private:
   void setRegisterBit(byte regAdress, int bitPos, bool state);
   bool getRegisterBit(byte regAdress, int bitPos);  
   byte _buff[6] ;    //6 bytes buffer for saving data read from the device
+
+  unsigned int handle;
 };
 #endif
 

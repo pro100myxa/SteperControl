@@ -4,6 +4,7 @@
 #include "Accelerometers/HarvbotADXL345PiI2CAccelerometer.h"
 #include "RF24.h"
 #include "ADXL345.h"
+#include "VL53L0X.hpp"
 
 //					WiringPI			Shifter-sheld      
 #define SX_STEP         4       //    		16
@@ -132,7 +133,7 @@ int main(void)
 	}
 	delete accel;*/
 
-	int x, y, z, i;
+	/*int x, y, z, i;
 	double xyz[3], gains[3], gains_orig[3];
 	gains[0] = 0;
 	gains[1] = 0;
@@ -145,6 +146,16 @@ int main(void)
 	{
 		accel.readAccel(&x, &y, &z);
 		cout << "x=" << x << " y=" << y << " z=" << z << endl;
+	}*/
+
+	VL53L0X sensor;
+	sensor.init();
+	sensor.setTimeout(500);
+	sensor.startContinuous();
+
+	while (1)
+	{
+		cout << sensor.readRangeContinuousMillimeters() << endl;
 	}
 
 	//while (1)

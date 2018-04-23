@@ -8,6 +8,9 @@
 #include <string>
 #include <unistd.h>
 
+#include <wiringPi.h>
+#include <wiringPiI2C.h>
+
 /*** Defines ***/
 
 // Record the current time to check an upcoming timeout against
@@ -47,6 +50,8 @@ VL53L0X::VL53L0X(const int16_t xshutGPIOPin, const uint8_t address) {
 	this->measurementTimingBudgetMicroseconds = 33000;
 	this->stopVariable = 0;
 	this->timeoutStartMilliseconds = milliseconds();
+
+	handle = wiringPiI2CSetupInterface("/dev/i2c-1", VL53L0X_ADDRESS_DEFAULT);
 }
 
 /*** Public Methods ***/
@@ -347,18 +352,12 @@ void VL53L0X::powerOff() {
 }
 
 void VL53L0X::writeRegister(uint8_t reg, uint8_t value) {
-	bool p = I2Cdev::writeByte(this->address, reg, value);
-	if (!p) {
-		throw(std::string("Error writing byte to register: ") + std::string(strerror(errno)));
-	}
+	wiringPiI2CWriteReg8(handle, reg, value);
 }
 
 void VL53L0X::writeRegister16Bit(uint8_t reg, uint16_t value) {
 	// No need to reverse endinaness as writeWord does that for us
-	bool p = I2Cdev::writeWord(this->address, reg, value);
-	if (!p) {
-		throw(std::string("Error writing word to register: ") + std::string(strerror(errno)));
-	}
+	wiringPiI2CWriteReg16(handle, reg, value);
 }
 
 void VL53L0X::writeRegister32Bit(uint8_t reg, uint32_t value) {
@@ -369,9 +368,9 @@ void VL53L0X::writeRegister32Bit(uint8_t reg, uint32_t value) {
 	data[2] = (value >> 16) & 0xFF;
 	data[3] = (value >> 24) & 0xFF;
 
-	bool p = I2Cdev::writeBytes(this->address, reg, 4, data);
-	if (!p) {
-		throw(std::string("Error writing dword to register"));
+	for (int i = 0; i < 4; i++)
+	{
+		wiringPiI2CWriteReg8(handle, reg, data[i]);
 	}
 }
 
@@ -380,43 +379,29 @@ void VL53L0X::writeRegisterMultiple(uint8_t reg, const uint8_t* source, uint8_t 
 	for (uint8_t i = 0; i < 4; ++i) {
 		data[i] = source[i];
 	}
-	bool p = I2Cdev::writeBytes(this->address, reg, count, data);
-	if (!p) {
-		throw(std::string("Error writing block to register"));
+
+	for (int i = 0; i < 4; i++)
+	{
+		wiringPiI2CWriteReg8(handle, reg, data[i]);
 	}
 }
 
 uint8_t VL53L0X::readRegister(uint8_t reg) {
-	uint8_t data;
-	int8_t p = I2Cdev::readByte(this->address, reg, &data);
-	if (p == -1) {
-		throw(std::string("Error reading byte from register"));
-	}
-	return data;
+	return wiringPiI2CReadReg8(handle, reg);
 }
 
 uint16_t VL53L0X::readRegister16Bit(uint8_t reg) {
-	uint8_t data[2];
-	// TODO: change to readWord if implemented; remove reversing endianness afterwards
-	int8_t p = I2Cdev::readBytes(this->address, reg, 2, data);
-
-	if (p == -1) {
-		throw(std::string("Error reading word from register"));
-	}
-
-	// Reverse endianness - readBytes doesn't do it for us
-	return ((int16_t)(data[0]) << 8) + (int16_t)(data[1]);
+	return wiringPiI2CReadReg16(handle, reg);
 }
 
 uint32_t VL53L0X::readRegister32Bit(uint8_t reg) {
 	uint8_t data[4];
-	// TODO: change to readWords if implemented; remove reversing endianness afterwards
-	int8_t p = I2Cdev::readBytes(this->address, reg, 4, data);
 
-	if (p == -1) {
-		throw(std::string("Error reading dword from register"));
+	for (int i = 0; i < 4; i++)
+	{
+		data[i] = wiringPiI2CReadReg8(handle, reg);
 	}
-
+	
 	uint32_t value = 0;
 	value += (uint32_t)data[0] << 24;
 	value += (uint32_t)data[1] << 16;
@@ -428,10 +413,9 @@ uint32_t VL53L0X::readRegister32Bit(uint8_t reg) {
 
 void VL53L0X::readRegisterMultiple(uint8_t reg, uint8_t* destination, uint8_t count) {
 	uint8_t data[count];
-	int8_t p = I2Cdev::readBytes(this->address, reg, count, data);
-
-	if (p == -1) {
-		throw(std::string("Error reading block from register"));
+	for (int i = 0; i < count; i++)        // device may send less than requested (abnormal)
+	{
+		data[i] = wiringPiI2CReadReg8(handle, reg);// receive a byte
 	}
 
 	for (uint8_t i = 0; i < count; ++i) {
