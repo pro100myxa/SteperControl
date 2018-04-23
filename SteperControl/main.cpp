@@ -1,7 +1,9 @@
-﻿#include <wiringPiSPI.h>
-#include <wiringPi.h>
+﻿#include <wiringPi.h>
 #include "Harvbot/HarvbotStepper.h"
+#include "Accelerometers/HarvbotAccelData.h"
+#include "Accelerometers/HarvbotADXL345PiI2CAccelerometer.h"
 #include "RF24.h"
+#include "ADXL345.h"
 
 //					WiringPI			Shifter-sheld      
 #define SX_STEP         4       //    		16
@@ -115,11 +117,35 @@ int main(void)
 {
 	printf("Program started\n");
 
-	setup();
+	//setup();
 
-	SY->move(-1000 * SY_RATIO);
+	/*SY->move(-1000 * SY_RATIO);
 	SX->move(-1000 * SY_RATIO);
 	runAllEnginesTillPostions();
+*/
+	/*HarvbotADXL345PiI2CAccelerometer* accel = new HarvbotADXL345PiI2CAccelerometer();
+	accel->setActive(true);
+	while (1)
+	{
+		HarvbotAccelData data = accel->readData();
+		cout << data.x << endl;
+	}
+	delete accel;*/
+
+	int x, y, z, i;
+	double xyz[3], gains[3], gains_orig[3];
+	gains[0] = 0;
+	gains[1] = 0;
+	gains[2] = 0;
+
+	ADXL345 accel;
+	accel.powerOn();
+	accel.getAxisGains(gains_orig);
+	while (1)
+	{
+		accel.readAccel(&x, &y, &z);
+		cout << "x=" << x << " y=" << y << " z=" << z << endl;
+	}
 
 	//while (1)
 	//{
