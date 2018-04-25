@@ -97,7 +97,7 @@ public:
   byte error_code;       // Initial state
   double gains[3];        // counts to Gs
 
-  ADXL345Pi(const char* device= "/dev/i2c-1");
+  ADXL345Pi(const char* device = "/dev/i2c-1");
   void powerOn();
   void readAccel(int* xyx);
   void readAccel(int* x, int* y, int* z);

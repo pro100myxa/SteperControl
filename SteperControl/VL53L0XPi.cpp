@@ -39,7 +39,7 @@ uint64_t milliseconds() {
 
 /*** Constructors ***/
 
-VL53L0X::VL53L0X(const int16_t xshutGPIOPin, const uint8_t address) {
+VL53L0XPi::VL53L0XPi(const char* device, const int16_t xshutGPIOPin, const uint8_t address) {
 	this->xshutGPIOPin = xshutGPIOPin;
 	this->address = address;
 	this->gpioInitialized = false;
@@ -51,12 +51,12 @@ VL53L0X::VL53L0X(const int16_t xshutGPIOPin, const uint8_t address) {
 	this->stopVariable = 0;
 	this->timeoutStartMilliseconds = milliseconds();
 
-	handle = wiringPiI2CSetupInterface("/dev/i2c-1", VL53L0X_ADDRESS_DEFAULT);
+	handle = wiringPiI2CSetupInterface(device, VL53L0X_ADDRESS_DEFAULT);
 }
 
 /*** Public Methods ***/
 
-void VL53L0X::initGPIO() {
+void VL53L0XPi::initGPIO() {
 	// Set XSHUT pin mode (if pin set)
 	if (this->xshutGPIOPin >= 0) {
 		std::string gpioDirectionFilename = std::string("/sys/class/gpio/gpio") + std::to_string(this->xshutGPIOPin) + std::string("/value");
@@ -85,7 +85,7 @@ void VL53L0X::initGPIO() {
 	this->gpioInitialized = true;
 }
 
-void VL53L0X::init(bool ioMode2v8) {
+void VL53L0XPi::init(bool ioMode2v8) {
 	if (!this->gpioInitialized) {
 		this->initGPIO();
 	}
@@ -310,7 +310,7 @@ void VL53L0X::init(bool ioMode2v8) {
 	// VL53L0X_PerformRefCalibration() end
 }
 
-void VL53L0X::powerOn() {
+void VL53L0XPi::powerOn() {
 	if (!this->gpioInitialized) {
 		this->initGPIO();
 	}
@@ -332,7 +332,7 @@ void VL53L0X::powerOn() {
 	}
 }
 
-void VL53L0X::powerOff() {
+void VL53L0XPi::powerOff() {
 	if (!this->gpioInitialized) {
 		this->initGPIO();
 	}
@@ -351,16 +351,16 @@ void VL53L0X::powerOff() {
 	}
 }
 
-void VL53L0X::writeRegister(uint8_t reg, uint8_t value) {
+void VL53L0XPi::writeRegister(uint8_t reg, uint8_t value) {
 	wiringPiI2CWriteReg8(handle, reg, value);
 }
 
-void VL53L0X::writeRegister16Bit(uint8_t reg, uint16_t value) {
+void VL53L0XPi::writeRegister16Bit(uint8_t reg, uint16_t value) {
 	// No need to reverse endinaness as writeWord does that for us
 	wiringPiI2CWriteReg16(handle, reg, value);
 }
 
-void VL53L0X::writeRegister32Bit(uint8_t reg, uint32_t value) {
+void VL53L0XPi::writeRegister32Bit(uint8_t reg, uint32_t value) {
 	// Split 32-bit word into MS ... LS bytes
 	uint8_t data[4];
 	data[0] = value & 0xFF;
@@ -374,7 +374,7 @@ void VL53L0X::writeRegister32Bit(uint8_t reg, uint32_t value) {
 	}
 }
 
-void VL53L0X::writeRegisterMultiple(uint8_t reg, const uint8_t* source, uint8_t count) {
+void VL53L0XPi::writeRegisterMultiple(uint8_t reg, const uint8_t* source, uint8_t count) {
 	uint8_t data[4];
 	for (uint8_t i = 0; i < 4; ++i) {
 		data[i] = source[i];
@@ -386,15 +386,15 @@ void VL53L0X::writeRegisterMultiple(uint8_t reg, const uint8_t* source, uint8_t 
 	}
 }
 
-uint8_t VL53L0X::readRegister(uint8_t reg) {
+uint8_t VL53L0XPi::readRegister(uint8_t reg) {
 	return wiringPiI2CReadReg8(handle, reg);
 }
 
-uint16_t VL53L0X::readRegister16Bit(uint8_t reg) {
+uint16_t VL53L0XPi::readRegister16Bit(uint8_t reg) {
 	return wiringPiI2CReadReg16(handle, reg);
 }
 
-uint32_t VL53L0X::readRegister32Bit(uint8_t reg) {
+uint32_t VL53L0XPi::readRegister32Bit(uint8_t reg) {
 	uint8_t data[4];
 
 	for (int i = 0; i < 4; i++)
@@ -411,7 +411,7 @@ uint32_t VL53L0X::readRegister32Bit(uint8_t reg) {
 	return value;
 }
 
-void VL53L0X::readRegisterMultiple(uint8_t reg, uint8_t* destination, uint8_t count) {
+void VL53L0XPi::readRegisterMultiple(uint8_t reg, uint8_t* destination, uint8_t count) {
 	uint8_t data[count];
 	for (int i = 0; i < count; i++)        // device may send less than requested (abnormal)
 	{
@@ -423,7 +423,7 @@ void VL53L0X::readRegisterMultiple(uint8_t reg, uint8_t* destination, uint8_t co
 	}
 }
 
-void VL53L0X::setAddress(uint8_t newAddress) {
+void VL53L0XPi::setAddress(uint8_t newAddress) {
 	// Ensure power state
 	this->powerOn();
 	// Set new I2C address
@@ -432,7 +432,7 @@ void VL53L0X::setAddress(uint8_t newAddress) {
 	this->address = newAddress;
 }
 
-bool VL53L0X::setSignalRateLimit(float limitMCPS) {
+bool VL53L0XPi::setSignalRateLimit(float limitMCPS) {
 	if (limitMCPS < 0 || limitMCPS > 511.99) {
 		return false;
 	}
@@ -442,11 +442,11 @@ bool VL53L0X::setSignalRateLimit(float limitMCPS) {
 	return true;
 }
 
-float VL53L0X::getSignalRateLimit() {
+float VL53L0XPi::getSignalRateLimit() {
 	return (float)this->readRegister16Bit(FINAL_RANGE_CONFIG_MIN_COUNT_RATE_RTN_LIMIT) / (1 << 7);
 }
 
-bool VL53L0X::setMeasurementTimingBudget(uint32_t budgetMicroseconds) {
+bool VL53L0XPi::setMeasurementTimingBudget(uint32_t budgetMicroseconds) {
 	// note that these are different than values in get_
 	uint16_t const START_OVERHEAD = 1320;
 	uint16_t const END_OVERHEAD = 960;
@@ -519,7 +519,7 @@ bool VL53L0X::setMeasurementTimingBudget(uint32_t budgetMicroseconds) {
 	return true;
 }
 
-uint32_t VL53L0X::getMeasurementTimingBudget() {
+uint32_t VL53L0XPi::getMeasurementTimingBudget() {
 	// note that these are different than values in set_
 	uint16_t const START_OVERHEAD = 1910;
 	uint16_t const END_OVERHEAD = 960;
@@ -556,7 +556,7 @@ uint32_t VL53L0X::getMeasurementTimingBudget() {
 	return budgetMicroseconds;
 }
 
-bool VL53L0X::setVcselPulsePeriod(vl53l0xVcselPeriodType type, uint8_t periodPCLKs) {
+bool VL53L0XPi::setVcselPulsePeriod(vl53l0xVcselPeriodType type, uint8_t periodPCLKs) {
 	uint8_t vcselPeriodValue = encodeVcselPeriod(periodPCLKs);
 
 	VL53L0XSequenceStepEnables enables;
@@ -703,7 +703,7 @@ bool VL53L0X::setVcselPulsePeriod(vl53l0xVcselPeriodType type, uint8_t periodPCL
 	return true;
 }
 
-uint8_t VL53L0X::getVcselPulsePeriod(vl53l0xVcselPeriodType type) {
+uint8_t VL53L0XPi::getVcselPulsePeriod(vl53l0xVcselPeriodType type) {
 	if (type == VcselPeriodPreRange) {
 		return decodeVcselPeriod(this->readRegister(PRE_RANGE_CONFIG_VCSEL_PERIOD));
 	} else if (type == VcselPeriodFinalRange) {
@@ -713,7 +713,7 @@ uint8_t VL53L0X::getVcselPulsePeriod(vl53l0xVcselPeriodType type) {
 	}
 }
 
-void VL53L0X::startContinuous(uint32_t periodMilliseconds) {
+void VL53L0XPi::startContinuous(uint32_t periodMilliseconds) {
 	this->writeRegister(0x80, 0x01);
 	this->writeRegister(0xFF, 0x01);
 	this->writeRegister(0x00, 0x00);
@@ -746,7 +746,7 @@ void VL53L0X::startContinuous(uint32_t periodMilliseconds) {
 	}
 }
 
-void VL53L0X::stopContinuous() {
+void VL53L0XPi::stopContinuous() {
 	// VL53L0X_REG_SYSRANGE_MODE_SINGLESHOT
 	this->writeRegister(SYSRANGE_START, 0x01);
 
@@ -757,7 +757,7 @@ void VL53L0X::stopContinuous() {
 	this->writeRegister(0xFF, 0x00);
 }
 
-uint16_t VL53L0X::readRangeContinuousMillimeters() {
+uint16_t VL53L0XPi::readRangeContinuousMillimeters() {
 	startTimeout();
 	while ((this->readRegister(RESULT_INTERRUPT_STATUS) & 0x07) == 0) {
 		if (checkTimeoutExpired()) {
@@ -780,7 +780,7 @@ uint16_t VL53L0X::readRangeContinuousMillimeters() {
 	return range;
 }
 
-uint16_t VL53L0X::readRangeSingleMillimeters() {
+uint16_t VL53L0XPi::readRangeSingleMillimeters() {
 	this->writeRegister(0x80, 0x01);
 	this->writeRegister(0xFF, 0x01);
 	this->writeRegister(0x00, 0x00);
@@ -804,7 +804,7 @@ uint16_t VL53L0X::readRangeSingleMillimeters() {
 	return readRangeContinuousMillimeters();
 }
 
-bool VL53L0X::timeoutOccurred() {
+bool VL53L0XPi::timeoutOccurred() {
 	bool tmp = this->didTimeout;
 	this->didTimeout = false;
 	return tmp;
@@ -812,7 +812,7 @@ bool VL53L0X::timeoutOccurred() {
 
 /*** Private Methods ***/
 
-bool VL53L0X::getSPADInfo(uint8_t* count, bool* typeIsAperture) {
+bool VL53L0XPi::getSPADInfo(uint8_t* count, bool* typeIsAperture) {
 	uint8_t tmp;
 
 	this->writeRegister(0x80, 0x01);
@@ -853,7 +853,7 @@ bool VL53L0X::getSPADInfo(uint8_t* count, bool* typeIsAperture) {
 	return true;
 }
 
-void VL53L0X::getSequenceStepEnables(VL53L0XSequenceStepEnables* enables) {
+void VL53L0XPi::getSequenceStepEnables(VL53L0XSequenceStepEnables* enables) {
 	uint8_t sequenceConfig = this->readRegister(SYSTEM_SEQUENCE_CONFIG);
 
 	enables->tcc = (sequenceConfig >> 4) & 0x1;
@@ -863,7 +863,7 @@ void VL53L0X::getSequenceStepEnables(VL53L0XSequenceStepEnables* enables) {
 	enables->finalRange = (sequenceConfig >> 7) & 0x1;
 }
 
-void VL53L0X::getSequenceStepTimeouts(const VL53L0XSequenceStepEnables * enables, VL53L0XSequenceStepTimeouts * timeouts) {
+void VL53L0XPi::getSequenceStepTimeouts(const VL53L0XSequenceStepEnables * enables, VL53L0XSequenceStepTimeouts * timeouts) {
 	timeouts->preRangeVCSELPeriodPCLKs = this->getVcselPulsePeriod(VcselPeriodPreRange);
 
 	timeouts->msrcDssTccMCLKs = this->readRegister(MSRC_CONFIG_TIMEOUT_MACROP) + 1;
@@ -883,12 +883,12 @@ void VL53L0X::getSequenceStepTimeouts(const VL53L0XSequenceStepEnables * enables
 	timeouts->finalRangeMicroseconds = this->timeoutMclksToMicroseconds(timeouts->finalRangeMCLKs, timeouts->finalRangeVCSELPeriodPCLKs);
 }
 
-uint16_t VL53L0X::decodeTimeout(uint16_t registerValue) {
+uint16_t VL53L0XPi::decodeTimeout(uint16_t registerValue) {
 	// format: "(LSByte * 2^MSByte) + 1"
 	return (uint16_t)((registerValue & 0x00FF) << (uint16_t)((registerValue & 0xFF00) >> 8)) + 1;
 }
 
-uint16_t VL53L0X::encodeTimeout(uint16_t timeoutMCLKs) {
+uint16_t VL53L0XPi::encodeTimeout(uint16_t timeoutMCLKs) {
 	// format: "(LSByte * 2^MSByte) + 1"
 	if (timeoutMCLKs == 0) {
 		return 0;
@@ -907,19 +907,19 @@ uint16_t VL53L0X::encodeTimeout(uint16_t timeoutMCLKs) {
 	return (msByte << 8) | (lsByte & 0xFF);
 }
 
-uint32_t VL53L0X::timeoutMclksToMicroseconds(uint16_t timeoutPeriodMCLKs, uint8_t vcselPeriodPCLKs) {
+uint32_t VL53L0XPi::timeoutMclksToMicroseconds(uint16_t timeoutPeriodMCLKs, uint8_t vcselPeriodPCLKs) {
 	uint32_t macroPeriodNanoseconds = calcMacroPeriod(vcselPeriodPCLKs);
 
 	return ((timeoutPeriodMCLKs * macroPeriodNanoseconds) + (macroPeriodNanoseconds / 2)) / 1000;
 }
 
-uint32_t VL53L0X::timeoutMicrosecondsToMclks(uint32_t timeoutPeriodMicroseconds, uint8_t vcselPeriodPCLKs) {
+uint32_t VL53L0XPi::timeoutMicrosecondsToMclks(uint32_t timeoutPeriodMicroseconds, uint8_t vcselPeriodPCLKs) {
 	uint32_t macroPeriodNanoseconds = calcMacroPeriod(vcselPeriodPCLKs);
 
 	return (((timeoutPeriodMicroseconds * 1000) + (macroPeriodNanoseconds / 2)) / macroPeriodNanoseconds);
 }
 
-bool VL53L0X::performSingleRefCalibration(uint8_t vhvInitByte) {
+bool VL53L0XPi::performSingleRefCalibration(uint8_t vhvInitByte) {
 	// VL53L0X_REG_SYSRANGE_MODE_START_STOP
 	this->writeRegister(SYSRANGE_START, 0x01 | vhvInitByte);
 

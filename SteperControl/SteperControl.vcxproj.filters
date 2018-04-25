@@ -1,7 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="main.cpp" />
     <ClCompile Include="RF24.cpp">
       <Filter>RF24</Filter>
     </ClCompile>
@@ -20,10 +19,17 @@
     <ClCompile Include="Accelerometers\HarvbotADXL345PiI2CAccelerometer.cpp">
       <Filter>Accelerometers</Filter>
     </ClCompile>
-    <ClCompile Include="VL53L0X.cpp">
+    <ClCompile Include="ADXL345Pi.cpp">
       <Filter>Native</Filter>
     </ClCompile>
-    <ClCompile Include="ADXL345Pi.cpp">
+    <ClCompile Include="HarvbotRangefinder.cpp">
+      <Filter>Rangefinder</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="HarvbotVL53L0XRangefinder.cpp">
+      <Filter>Rangefinder</Filter>
+    </ClCompile>
+    <ClCompile Include="VL53L0XPi.cpp">
       <Filter>Native</Filter>
     </ClCompile>
   </ItemGroup>
@@ -64,13 +70,19 @@
     <ClInclude Include="Accelerometers\HarvbotADXL345PiI2CAccelerometer.h">
       <Filter>Accelerometers</Filter>
     </ClInclude>
-    <ClInclude Include="VL53L0X.hpp">
-      <Filter>Native</Filter>
-    </ClInclude>
     <ClInclude Include="VL53L0X_defines.hpp">
       <Filter>Native</Filter>
     </ClInclude>
     <ClInclude Include="ADXL345Pi.h">
+      <Filter>Native</Filter>
+    </ClInclude>
+    <ClInclude Include="HarvbotRangefinder.h">
+      <Filter>Rangefinder</Filter>
+    </ClInclude>
+    <ClInclude Include="HarvbotVL53L0XRangefinder.h">
+      <Filter>Rangefinder</Filter>
+    </ClInclude>
+    <ClInclude Include="VL53L0XPi.hpp">
       <Filter>Native</Filter>
     </ClInclude>
   </ItemGroup>
@@ -86,6 +98,9 @@
     </Filter>
     <Filter Include="Native">
       <UniqueIdentifier>{85fb0671-5908-473a-8312-c91cb5f22384}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Rangefinder">
+      <UniqueIdentifier>{4f0247e4-f670-4eb5-a6ed-774b68a4ccf8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
