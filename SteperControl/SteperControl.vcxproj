@@ -87,6 +87,7 @@
     <ClCompile Include="Accelerometers\HarvbotAccelerometer.cpp" />
     <ClCompile Include="Accelerometers\HarvbotADXL345PiI2CAccelerometer.cpp" />
     <ClCompile Include="ADXL345Pi.cpp" />
+    <ClCompile Include="HarvbotLaser.cpp" />
     <ClCompile Include="HarvbotRangefinder.cpp" />
     <ClCompile Include="HarvbotVL53L0XRangefinder.cpp" />
     <ClCompile Include="Harvbot\HarvbotStepper.cpp" />
@@ -101,6 +102,7 @@
     <ClInclude Include="Accelerometers\HarvbotAccelerometer.h" />
     <ClInclude Include="Accelerometers\HarvbotADXL345PiI2CAccelerometer.h" />
     <ClInclude Include="ADXL345Pi.h" />
+    <ClInclude Include="HarvbotLaser.h" />
     <ClInclude Include="HarvbotRangefinder.h" />
     <ClInclude Include="HarvbotVL53L0XRangefinder.h" />
     <ClInclude Include="Harvbot\HarvbotStepper.h" />

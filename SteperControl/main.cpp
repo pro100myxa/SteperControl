@@ -4,7 +4,7 @@
 #include "Accelerometers/HarvbotADXL345PiI2CAccelerometer.h"
 #include "RF24.h"
 #include "ADXL345Pi.h"
-#include "VL53L0X.hpp"
+#include "VL53L0XPi.hpp"
 
 //					WiringPI			Shifter-sheld      
 #define SX_STEP         4       //    		16
@@ -148,7 +148,7 @@ int main(void)
 		cout << "x=" << x << " y=" << y << " z=" << z << endl;
 	}*/
 
-	VL53L0X sensor;
+	VL53L0XPi sensor;
 	sensor.init();
 	sensor.setTimeout(500);
 	sensor.startContinuous();

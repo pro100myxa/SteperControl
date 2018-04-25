@@ -1,6 +1,6 @@
 #include "HarvbotVL53L0XRangefinder.h"
 
-HarvbotVL53L0XRangefinder::HarvbotVL53L0XRangefinder(const char* device = "/dev/i2c-1")
+HarvbotVL53L0XRangefinder::HarvbotVL53L0XRangefinder(const char* device)
 {
 	innerRangefinder = new VL53L0XPi(device);
 }
