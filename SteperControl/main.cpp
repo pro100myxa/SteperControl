@@ -3,7 +3,7 @@
 #include "Accelerometers/HarvbotAccelData.h"
 #include "Accelerometers/HarvbotADXL345PiI2CAccelerometer.h"
 #include "RF24.h"
-#include "ADXL345.h"
+#include "ADXL345Pi.h"
 #include "VL53L0X.hpp"
 
 //					WiringPI			Shifter-sheld      

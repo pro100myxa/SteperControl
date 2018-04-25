@@ -89,7 +89,7 @@
 
 typedef unsigned char byte;
 
-class ADXL345
+class ADXL345Pi
 {
 public:
   bool status;           // set when error occurs 
@@ -97,7 +97,7 @@ public:
   byte error_code;       // Initial state
   double gains[3];        // counts to Gs
 
-  ADXL345();
+  ADXL345Pi(const char* device= "/dev/i2c-1");
   void powerOn();
   void readAccel(int* xyx);
   void readAccel(int* x, int* y, int* z);

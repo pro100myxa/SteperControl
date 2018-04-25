@@ -1,45 +1,35 @@
 #pragma once
 #include "HarvbotAccelData.h"
+
 class HarvbotAccelerometer
 {
 public:
-	HarvbotAccelerometer();
+	HarvbotAccelerometer(Scale scale = Scale_FullRes);
 	~HarvbotAccelerometer();
 
-	void setScale(Scale scale);
-	Scale getScale();
+	virtual void setScale(Scale scale);
 
-	void setRate(Rate rate);
-	Rate getRate();
+	virtual Scale getScale();
 
-	void setFIFO(FIFOMode mode);
-	uint8_t getFIFOBytes();
+	virtual void setRate(Rate rate) {};
 
-	void setPowerMode(PowerMode mode);
-	PowerMode getPowerMode();
+	virtual Rate getRate() = 0;
 
-	bool getActive();
-	void setActive(bool active);
+	virtual void setPowerMode(PowerMode mode) {};
 
-	void zeroOffsets();
-	void initOffset();
+	virtual PowerMode getPowerMode() = 0;
 
-	virtual HarvbotAccelData readData();
+	virtual bool getActive() = 0;
 
-	uint8_t readRegister(uint8_t register);
-	void writeRegister(uint8_t reg, uint8_t value);
+	virtual void setActive(bool active) {};
 
-protected:
-	void initialize(Scale scale = Scale_FullRes);
+	virtual void zeroOffsets() = 0;
+
+	virtual void initOffset() = 0;
+
+	virtual HarvbotAccelData readData() = 0;
 
 private:
 	Scale scale;
-
-	int8_t checkoverflow(int32_t value);
-
-	virtual size_t readRegisters(uint8_t startreg, uint8_t* buff, size_t size) = 0;
-	virtual void writeRegisters(uint8_t reg, uint8_t* buff, size_t size) = 0;
-	virtual void fatalError(std::string error) = 0;
-	virtual void debug(std::string msg) = 0;
 };
 

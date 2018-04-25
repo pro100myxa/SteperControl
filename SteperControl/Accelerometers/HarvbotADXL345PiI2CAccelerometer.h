@@ -12,18 +12,28 @@
 #include "HarvbotAccelData.h"
 #include "HarvbotAccelerometer.h"
 #include "HarvbotADXL345PiI2CAccelerometer.h"
-
-#define ADXL345_DEVADDR 0x53    // I2C address
+#include "../ADXL345Pi.h"
 
 class HarvbotADXL345PiI2CAccelerometer : public HarvbotAccelerometer {
 public:
-	HarvbotADXL345PiI2CAccelerometer(Scale scale = Scale_8G);
-	virtual ~HarvbotADXL345PiI2CAccelerometer();
+	HarvbotADXL345PiI2CAccelerometer(const char* device = "/dev/i2c-1", Scale scale = Scale_8G);
+	~HarvbotADXL345PiI2CAccelerometer();
 
+	void setScale(Scale scale);
+
+	void setRate(Rate rate);
+	Rate getRate();
+
+	void setPowerMode(PowerMode mode);
+	PowerMode getPowerMode();
+
+	bool getActive();
+	void setActive(bool active);
+
+	void zeroOffsets();
+	void initOffset();
+
+	HarvbotAccelData readData();
 private:
-	int handle;
-	virtual size_t readRegisters(uint8_t startreg, uint8_t* buff, size_t size);
-	virtual void writeRegisters(uint8_t reg, uint8_t* buff, size_t size);
-	virtual void fatalError(std::string error);
-	virtual void debug(std::string msg);
+	ADXL345Pi* innerAccel;
 };

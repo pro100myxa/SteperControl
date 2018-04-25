@@ -20,8 +20,12 @@
     <ClCompile Include="Accelerometers\HarvbotADXL345PiI2CAccelerometer.cpp">
       <Filter>Accelerometers</Filter>
     </ClCompile>
-    <ClCompile Include="ADXL345.cpp" />
-    <ClCompile Include="VL53L0X.cpp" />
+    <ClCompile Include="VL53L0X.cpp">
+      <Filter>Native</Filter>
+    </ClCompile>
+    <ClCompile Include="ADXL345Pi.cpp">
+      <Filter>Native</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="nRF24L01.h">
@@ -60,9 +64,15 @@
     <ClInclude Include="Accelerometers\HarvbotADXL345PiI2CAccelerometer.h">
       <Filter>Accelerometers</Filter>
     </ClInclude>
-    <ClInclude Include="ADXL345.h" />
-    <ClInclude Include="VL53L0X.hpp" />
-    <ClInclude Include="VL53L0X_defines.hpp" />
+    <ClInclude Include="VL53L0X.hpp">
+      <Filter>Native</Filter>
+    </ClInclude>
+    <ClInclude Include="VL53L0X_defines.hpp">
+      <Filter>Native</Filter>
+    </ClInclude>
+    <ClInclude Include="ADXL345Pi.h">
+      <Filter>Native</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="RF24">
@@ -73,6 +83,9 @@
     </Filter>
     <Filter Include="Accelerometers">
       <UniqueIdentifier>{30745373-5a3d-4d25-8c24-be8afe2dea99}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Native">
+      <UniqueIdentifier>{85fb0671-5908-473a-8312-c91cb5f22384}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
