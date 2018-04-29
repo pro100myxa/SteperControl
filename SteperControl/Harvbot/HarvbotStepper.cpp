@@ -10,6 +10,7 @@ HarvbotStepper::HarvbotStepper(uint8_t stepPin, uint8_t dirPin, unsigned int fre
 	setEngineFrequency(frequency);
 	_enablePin = 0xff;
 	_lastStepTime = 0;
+	_accelerationPercent = 0;
 
 	// NEW
 	_direction = DIRECTION_CCW;
@@ -22,6 +23,8 @@ void HarvbotStepper::moveTo(long absolute)
 {
     if (_targetPos != absolute)
     {
+		_startPos = _currentPos;
+
 		_direction = (absolute > _targetPos) ? DIRECTION_CW : DIRECTION_CCW;
 
 		unsigned int time = 0;
@@ -44,10 +47,33 @@ bool HarvbotStepper::runSpeed()
     if (distanceToGo() != 0)
     {
 		unsigned int time = micros();
-		if (time < _lastStepTime + _pulsePeriod)
+
+		unsigned int currentPulsePeriod = _pulsePeriod;
+
+ 		unsigned int accelerationNumberOfSteps = abs(_targetPos - _startPos) / 100 * _accelerationPercent;
+		if (accelerationNumberOfSteps > 0)
+		{
+			unsigned int startFr = _engineFrequency / 100 * (100 - _accelerationPercent);
+			unsigned int startPulse = 1000000 / startFr;
+			float acceelerationPulseDelta = (startPulse - _pulsePeriod) / ((float)accelerationNumberOfSteps);
+
+			if (_currentPos < _startPos + accelerationNumberOfSteps)
+			{
+				currentPulsePeriod = startPulse - (unsigned int)(acceelerationPulseDelta * abs(_startPos - _currentPos));
+			}
+			else if (_currentPos > _targetPos - accelerationNumberOfSteps)
+			{
+				currentPulsePeriod = _pulsePeriod + (unsigned int)(acceelerationPulseDelta * abs(_targetPos - accelerationNumberOfSteps - _currentPos));
+			}
+		}
+
+		unsigned int _pulsePeriod = 0;
+		if (time < _lastStepTime + currentPulsePeriod)
 		{
 			return true;
 		}
+
+		printf("Step=%d, Pulse=%d\n", _currentPos, currentPulsePeriod);
 
 		_lastStepTime = time;
 
@@ -212,4 +238,14 @@ uint8_t HarvbotStepper::stepPin()
 uint8_t HarvbotStepper::directionPin()
 {
 	return _dirPin;
+}
+
+unsigned int HarvbotStepper::accelerationPercent()
+{
+	return _accelerationPercent;
+}
+
+void HarvbotStepper::setAccelerationPercent(unsigned int percent)
+{
+	_accelerationPercent = percent;
 }
