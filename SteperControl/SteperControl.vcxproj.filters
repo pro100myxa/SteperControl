@@ -33,6 +33,15 @@
       <Filter>Native</Filter>
     </ClCompile>
     <ClCompile Include="HarvbotLaser.cpp" />
+    <ClCompile Include="ams_as5048bPi.cpp">
+      <Filter>Native</Filter>
+    </ClCompile>
+    <ClCompile Include="AS5048APi.cpp">
+      <Filter>Native</Filter>
+    </ClCompile>
+    <ClCompile Include="PCA9685Pi.cpp">
+      <Filter>Native</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="nRF24L01.h">
@@ -87,6 +96,15 @@
       <Filter>Native</Filter>
     </ClInclude>
     <ClInclude Include="HarvbotLaser.h" />
+    <ClInclude Include="ams_as5048bPi.h">
+      <Filter>Native</Filter>
+    </ClInclude>
+    <ClInclude Include="AS5048APi.h">
+      <Filter>Native</Filter>
+    </ClInclude>
+    <ClInclude Include="PCA9685Pi.h">
+      <Filter>Native</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="RF24">

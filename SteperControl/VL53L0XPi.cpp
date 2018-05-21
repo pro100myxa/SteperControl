@@ -770,10 +770,10 @@ uint16_t VL53L0XPi::readRangeContinuousMillimeters() {
 	// assumptions: Linearity Corrective Gain is 1000 (default);
 	// fractional ranging is not enabled
 	// Note: reading 16-bit register was working on Arduino but here it's not, thus double read and manual addition
-	uint16_t range = this->readRegister16Bit(RESULT_RANGE_STATUS + 10);
-	// uint8_t rangeA = this->readRegister(RESULT_RANGE_STATUS + 10);
-	// uint8_t rangeB = this->readRegister(RESULT_RANGE_STATUS + 11);
-	// uint16_t range = ((uint16_t)(rangeA)<<8) + (uint16_t)(rangeB);
+	//uint16_t range = this->readRegister16Bit(RESULT_RANGE_STATUS + 10);
+	 uint8_t rangeA = this->readRegister(RESULT_RANGE_STATUS + 10);
+	 uint8_t rangeB = this->readRegister(RESULT_RANGE_STATUS + 11);
+	 uint16_t range = ((uint16_t)(rangeA)<<8) + (uint16_t)(rangeB);
 
 	this->writeRegister(SYSTEM_INTERRUPT_CLEAR, 0x01);
 

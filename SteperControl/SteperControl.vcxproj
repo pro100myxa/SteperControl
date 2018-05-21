@@ -87,12 +87,15 @@
     <ClCompile Include="Accelerometers\HarvbotAccelerometer.cpp" />
     <ClCompile Include="Accelerometers\HarvbotADXL345PiI2CAccelerometer.cpp" />
     <ClCompile Include="ADXL345Pi.cpp" />
+    <ClCompile Include="ams_as5048bPi.cpp" />
+    <ClCompile Include="AS5048APi.cpp" />
     <ClCompile Include="HarvbotLaser.cpp" />
     <ClCompile Include="HarvbotRangefinder.cpp" />
     <ClCompile Include="HarvbotVL53L0XRangefinder.cpp" />
     <ClCompile Include="Harvbot\HarvbotStepper.cpp" />
     <ClCompile Include="Harvbot\HarvbotTerminableStepper.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="PCA9685Pi.cpp" />
     <ClCompile Include="RF24.cpp" />
     <ClCompile Include="spi.cpp" />
     <ClCompile Include="VL53L0XPi.cpp" />
@@ -102,6 +105,8 @@
     <ClInclude Include="Accelerometers\HarvbotAccelerometer.h" />
     <ClInclude Include="Accelerometers\HarvbotADXL345PiI2CAccelerometer.h" />
     <ClInclude Include="ADXL345Pi.h" />
+    <ClInclude Include="ams_as5048bPi.h" />
+    <ClInclude Include="AS5048APi.h" />
     <ClInclude Include="HarvbotLaser.h" />
     <ClInclude Include="HarvbotRangefinder.h" />
     <ClInclude Include="HarvbotVL53L0XRangefinder.h" />
@@ -109,6 +114,7 @@
     <ClInclude Include="Harvbot\HarvbotTerminableStepper.h" />
     <ClInclude Include="includes.h" />
     <ClInclude Include="nRF24L01.h" />
+    <ClInclude Include="PCA9685Pi.h" />
     <ClInclude Include="printf.h" />
     <ClInclude Include="RF24.h" />
     <ClInclude Include="RF24_arch_config.h" />

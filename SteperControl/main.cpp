@@ -1,10 +1,12 @@
 ﻿#include <wiringPi.h>
+#include <math.h>
 #include "Harvbot/HarvbotStepper.h"
 #include "Accelerometers/HarvbotAccelData.h"
 #include "Accelerometers/HarvbotADXL345PiI2CAccelerometer.h"
 #include "RF24.h"
 #include "ADXL345Pi.h"
 #include "VL53L0XPi.hpp"
+#include "ams_as5048bPi.h"
 
 //					WiringPI			Shifter-sheld      
 #define SX_STEP         4       //    		16
@@ -25,7 +27,7 @@
 #define SJ_STEP         3       //  		15 
 #define SJ_DIR          2       //  		13
 #define SJ_END          30		//			27
-#define SJ_RATIO        4
+#define SJ_RATIO        4 * 15
 
 
 unsigned char recieved_data[4];
@@ -38,14 +40,22 @@ HarvbotStepper* SY;
 HarvbotStepper* SZ;
 HarvbotStepper* SJ;
 
+#define offsetX     0    // OFFSET values
+#define offsetY     0
+#define offsetZ     0
+
+#define gainX       1     // GAIN factors
+#define gainY       1
+#define gainZ       1
+
 void setup() {
 
 	wiringPiSetup();
 
-	SX = new HarvbotStepper(SX_STEP, SX_DIR, 18000);
+	SX = new HarvbotStepper(SX_STEP, SX_DIR, 10000);
 	SY = new HarvbotStepper(SY_STEP, SY_DIR, 14000);
 	SZ = new HarvbotStepper(SZ_STEP, SZ_DIR, 1000);
-	SJ = new HarvbotStepper(SJ_STEP, SJ_DIR, 1000);
+	SJ = new HarvbotStepper(SJ_STEP, SJ_DIR, 5000);
 
 	radio.begin(); //активировать модуль
 	radio.setAutoAck(1);         //режим подтверждения приёма, 1 вкл 0 выкл
@@ -117,21 +127,43 @@ void loop() {
 int main(void)
 {
 	printf("Program started\n");
+	setup();
 
-	//setup();
+	AMS_AS5048BPi mysensor("/dev/i2c-1");
 
+	//init AMS_AS5048B object
+	mysensor.begin();
+
+	//consider the current position as zero
+	mysensor.setZeroReg();
+
+	while (1)
+	{
+		cout << mysensor.angleR(U_RAW, true) << endl;
+	}
+
+	/*SX->setAccelerationPercent(20);
+	SX->move(-50 * SJ_RATIO);
+	runAllEnginesTillPostions();
+*/
 	/*SY->move(-1000 * SY_RATIO);
 	SX->move(-1000 * SY_RATIO);
 	runAllEnginesTillPostions();
 */
-	/*HarvbotADXL345PiI2CAccelerometer* accel = new HarvbotADXL345PiI2CAccelerometer();
-	accel->setActive(true);
-	while (1)
-	{
-		HarvbotAccelData data = accel->readData();
-		cout << data.x << endl;
-	}
-	delete accel;*/
+	//HarvbotADXL345PiI2CAccelerometer* accel = new HarvbotADXL345PiI2CAccelerometer();
+	//accel->setPowerMode(NormalPower);
+	//accel->setActive(true);
+
+	//while (1)
+	//{
+	//	HarvbotAccelData data = accel->readData();
+
+	//	double roll = atan2(data.x, data.y) * 180.0f / M_PI;
+	//	double pitch = atan2((-data.x), sqrt(data.y * data.y + data.z * data.z)) * 57.3;
+	//	cout << "Raw: " << data.x << ", " << data.y << ", " << data.z << endl;
+	//	//cout << roll << ":" << pitch << endl;
+	//}
+	//delete accel;
 
 	/*int x, y, z, i;
 	double xyz[3], gains[3], gains_orig[3];
@@ -148,7 +180,7 @@ int main(void)
 		cout << "x=" << x << " y=" << y << " z=" << z << endl;
 	}*/
 
-	VL53L0XPi sensor;
+	/*VL53L0XPi sensor;
 	sensor.init();
 	sensor.setTimeout(500);
 	sensor.startContinuous();
@@ -156,7 +188,7 @@ int main(void)
 	while (1)
 	{
 		cout << sensor.readRangeContinuousMillimeters() << endl;
-	}
+	}*/
 
 	//while (1)
 	//{
