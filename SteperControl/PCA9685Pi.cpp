@@ -34,7 +34,7 @@
  \param bus the bus to use in /dev/i2c-%d.
  \param address the device address on bus
  */
-PCA9685Pi::PCA9685Pi(const char* device = "/dev/i2c-1", int address) {
+PCA9685Pi::PCA9685Pi(const char* device, int address) {
 	handle = wiringPiI2CSetupInterface(device, address);
 	reset();
 	setPWMFreq(1000);

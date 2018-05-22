@@ -7,6 +7,7 @@
 #include "ADXL345Pi.h"
 #include "VL53L0XPi.hpp"
 #include "ams_as5048bPi.h"
+#include "PCA9685Pi.h"
 
 //					WiringPI			Shifter-sheld      
 #define SX_STEP         4       //    		16
@@ -47,6 +48,9 @@ HarvbotStepper* SJ;
 #define gainX       1     // GAIN factors
 #define gainY       1
 #define gainZ       1
+
+#define SERVOMIN  150 // this is the 'minimum' pulse length count (out of 4096)
+#define SERVOMAX 4096 // this is the 'maximum' pulse length count (out of 4096)
 
 void setup() {
 
@@ -123,24 +127,93 @@ void loop() {
 	}
 }
 
+#define PIN_BASE 300
+#define MAX_PWM 4096
+#define HERTZ 50
+
+int calcTicks(float impulseMs, int hertz)
+{
+	float cycleMs = 1000.0f / hertz;
+	return (int)(MAX_PWM * impulseMs / cycleMs + 0.5f);
+}
 
 int main(void)
 {
 	printf("Program started\n");
 	setup();
 
-	AMS_AS5048BPi mysensor("/dev/i2c-1");
+	//AMS_AS5048BPi mysensor("/dev/i2c-1");
 
-	//init AMS_AS5048B object
-	mysensor.begin();
+	////init AMS_AS5048B object
+	//mysensor.begin();
 
-	//consider the current position as zero
-	mysensor.setZeroReg();
+	////consider the current position as zero
+	//mysensor.setZeroReg();
+
+	//while (1)
+	//{
+	//	cout << mysensor.angleR(U_RAW, true) << endl;
+	//}
+
+	PCA9685Pi pca9685;
+	unsigned int pulse_length = 1000000;
+	pulse_length = 200;
+	
+	pca9685.setPWMFreq(60);
 
 	while (1)
 	{
-		cout << mysensor.angleR(U_RAW, true) << endl;
+		pca9685.setPWM(1, calcTicks(1, 60));
+
+		delay(2000);
+
+		pca9685.setPWM(1, calcTicks(1.5, 60));
+
+		delay(2000);
+
+		pca9685.setPWM(1, calcTicks(2, 60));
+
+		delay(2000);
 	}
+
+	
+
+	/*int i = 0;
+	unsigned int lastStepTime = micros();
+	while (1)
+	{
+		while(i<4096)
+		{
+			unsigned int time = micros();
+			if (time > lastStepTime + pulse_length)
+			{
+				pca9685.setPWM(1, i);
+				lastStepTime = time;
+				i++;
+			}
+
+			delayMicroseconds(100);
+		}
+
+		delay(1000);
+
+		lastStepTime = micros();
+		while (i>=0)
+		{
+			unsigned int time = micros();
+			if (time > lastStepTime + pulse_length)
+			{
+				pca9685.setPWM(1, i);
+				lastStepTime = time;
+				i--;
+			}
+
+			delayMicroseconds(100);
+		}
+
+		delay(1000);
+		i = 0;
+	}*/
 
 	/*SX->setAccelerationPercent(20);
 	SX->move(-50 * SJ_RATIO);

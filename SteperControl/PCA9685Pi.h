@@ -49,7 +49,7 @@
 //! Main class that exports features for PCA9685 chip
 class PCA9685Pi {
 public:
-	PCA9685Pi(const char* device = "/dev/i2c-1", int address);
+	PCA9685Pi(const char* device = "/dev/i2c-1", int address=0x40);
 	virtual ~PCA9685Pi();
 
 	void setPWMFreq(int);
