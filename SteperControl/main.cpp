@@ -6,7 +6,7 @@
 #include "RF24.h"
 #include "ADXL345Pi.h"
 #include "VL53L0XPi.hpp"
-#include "ams_as5048bPi.h"
+#include "AS5048APi.h"
 #include "PCA9685Pi.h"
 
 //					WiringPI			Shifter-sheld      
@@ -34,7 +34,7 @@
 unsigned char recieved_data[4];
 unsigned char address[][6] = { "1Node", "2Node", "3Node", "4Node", "5Node", "6Node" };
 
-RF24 radio(10, 7);
+//RF24 radio(10, 7);
 
 HarvbotStepper* SX;
 HarvbotStepper* SY;
@@ -61,22 +61,22 @@ void setup() {
 	SZ = new HarvbotStepper(SZ_STEP, SZ_DIR, 1000);
 	SJ = new HarvbotStepper(SJ_STEP, SJ_DIR, 5000);
 
-	radio.begin(); //активировать модуль
-	radio.setAutoAck(1);         //режим подтверждения приёма, 1 вкл 0 выкл
-	radio.setRetries(0, 15);    //(время между попыткой достучаться, число попыток)
-	radio.enableAckPayload();    //разрешить отсылку данных в ответ на входящий сигнал
-	radio.setPayloadSize(32);     //размер пакета, в байтах
+	//radio.begin(); //активировать модуль
+	//radio.setAutoAck(1);         //режим подтверждения приёма, 1 вкл 0 выкл
+	//radio.setRetries(0, 15);    //(время между попыткой достучаться, число попыток)
+	//radio.enableAckPayload();    //разрешить отсылку данных в ответ на входящий сигнал
+	//radio.setPayloadSize(32);     //размер пакета, в байтах
 
-	radio.openReadingPipe(0, address[0]);     //хотим слушать трубу 0
-	radio.setChannel(0x60);  //выбираем канал (в котором нет шумов!)
+	//radio.openReadingPipe(0, address[0]);     //хотим слушать трубу 0
+	//radio.setChannel(0x60);  //выбираем канал (в котором нет шумов!)
 
-	radio.setPALevel(RF24_PA_MAX); //уровень мощности передатчика. На выбор RF24_PA_MIN, RF24_PA_LOW, RF24_PA_HIGH, RF24_PA_MAX
-	radio.setDataRate(RF24_250KBPS); //скорость обмена. На выбор RF24_2MBPS, RF24_1MBPS, RF24_250KBPS
-									 //должна быть одинакова на приёмнике и передатчике!
-									 //при самой низкой скорости имеем самую высокую чувствительность и дальность!!
+	//radio.setPALevel(RF24_PA_MAX); //уровень мощности передатчика. На выбор RF24_PA_MIN, RF24_PA_LOW, RF24_PA_HIGH, RF24_PA_MAX
+	//radio.setDataRate(RF24_250KBPS); //скорость обмена. На выбор RF24_2MBPS, RF24_1MBPS, RF24_250KBPS
+	//								 //должна быть одинакова на приёмнике и передатчике!
+	//								 //при самой низкой скорости имеем самую высокую чувствительность и дальность!!
 
-	radio.powerUp(); //начать работу
-	radio.startListening();  //начинаем слушать эфир, мы приёмный модуль
+	//radio.powerUp(); //начать работу
+	//radio.startListening();  //начинаем слушать эфир, мы приёмный модуль
 }
 
 int getDelta(unsigned char val)
@@ -106,26 +106,26 @@ void runAllEnginesTillPostions()
 		sjRun = SJ->run();
 	} while (sxRun || syRun || szRun || sjRun);
 }
-
-void loop() {
-
-	unsigned char pipeNo;
-	while (radio.available(&pipeNo)) {  // слушаем эфир со всех труб
-		radio.read(&recieved_data, sizeof(recieved_data));
-
-		int sx = getDelta(recieved_data[0])*SX_RATIO;
-		int sy = getDelta(recieved_data[1])*SY_RATIO;
-		int sz = getDelta(recieved_data[2])*SZ_RATIO;
-		int sj = getDelta(recieved_data[3])*SJ_RATIO;
-
-		SX->move(sx);
-		SY->move(sy);
-		SZ->move(sz);
-		SJ->move(sj);
-
-		runAllEnginesTillPostions();
-	}
-}
+//
+//void loop() {
+//
+//	unsigned char pipeNo;
+//	while (radio.available(&pipeNo)) {  // слушаем эфир со всех труб
+//		radio.read(&recieved_data, sizeof(recieved_data));
+//
+//		int sx = getDelta(recieved_data[0])*SX_RATIO;
+//		int sy = getDelta(recieved_data[1])*SY_RATIO;
+//		int sz = getDelta(recieved_data[2])*SZ_RATIO;
+//		int sj = getDelta(recieved_data[3])*SJ_RATIO;
+//
+//		SX->move(sx);
+//		SY->move(sy);
+//		SZ->move(sz);
+//		SJ->move(sj);
+//
+//		runAllEnginesTillPostions();
+//	}
+//}
 
 #define PIN_BASE 300
 #define MAX_PWM 4096
@@ -139,7 +139,8 @@ int calcTicks(float impulseMs, int hertz)
 
 int main(void)
 {
-	printf("Program started\n");
+	//wiringPiSetup();
+	//printf("Program started\n");
 	setup();
 
 	//AMS_AS5048BPi mysensor("/dev/i2c-1");
@@ -155,7 +156,7 @@ int main(void)
 	//	cout << mysensor.angleR(U_RAW, true) << endl;
 	//}
 
-	PCA9685Pi pca9685;
+	/*PCA9685Pi pca9685;
 	unsigned int pulse_length = 1000000;
 	pulse_length = 200;
 	
@@ -174,8 +175,15 @@ int main(void)
 		pca9685.setPWM(1, calcTicks(2, 60));
 
 		delay(2000);
-	}
+	}*/
 
+	AS5048APi as5048a(10);
+	as5048a.init();
+	while (1)
+	{
+		cout << as5048a.getRawRotation() << endl;
+		delay(1000);
+	}
 	
 
 	/*int i = 0;

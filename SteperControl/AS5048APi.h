@@ -1,26 +1,37 @@
 #ifndef as5048_h
 #define as5048_h
-
-#include <stdint.h>
+#define LIBRARY_VERSION 1.0.1
 #include <wiringPi.h>
 #include <wiringPiSPI.h>
 
-class AS5048APi{
-private:
-	bool debug;
+#include "spi.h"
+
+typedef unsigned char byte;
+typedef unsigned short word;
+
+class AS5048APi {
+
 	bool errorFlag;
-	uint8_t _cs;
-	uint16_t position;
-	uint8_t esp32_delay;
-	
-	uint16_t handle;
-	
-	uint8_t spiCalcEvenParity(uint16_t);
+	byte _cs;
+	byte cs;
+	byte dout;
+	byte din;
+	byte clk;
+	word position;
+	SPI spi;
+
+	public:
 
 	/**
-	 * Set the delay acording to the microcontroller architecture
+	 *	Constructor
 	 */
-	void setDelay();
+	AS5048APi(byte arg_cs);
+
+	/**
+	 * Initialiser
+	 * Sets up the SPI interface
+	 */
+	void init();
 
 	/**
 	 * Closes the SPI connection
@@ -29,69 +40,38 @@ private:
 
 	/*
 	 * Read a register from the sensor
-	 * Takes the address of the register as a 16 bit uint16_t
+	 * Takes the address of the register as a 16 bit word
 	 * Returns the value of the register
 	 */
-	uint16_t read(uint16_t registerAddress);
+	word read(word registerAddress);
 
 	/*
 	 * Write to a register
-	 * Takes the 16-bit  address of the target register and the 16 bit uint16_t of data
+	 * Takes the 16-bit  address of the target register and the 16 bit word of data
 	 * to be written to that register
 	 * Returns the value of the register after the write has been performed. This
 	 * is read back from the sensor to ensure a sucessful write.
 	 */
-	uint16_t write(uint16_t registerAddress, uint16_t data);
+	word write(word registerAddress, word data);
 
 	/**
 	 * Get the rotation of the sensor relative to the zero position.
 	 *
-	 * @return {int16_t} between -2^13 and 2^13
+	 * @return {int} between -2^13 and 2^13
 	 */
-	int16_t getRotation();
-
-	/*
-	 * Check if an error has been encountered.
-	 */
-	bool error();
-
-public:
-
-	/**
-	 *	Constructor
-	 */
-	AS5048APi(int16_t channel = 0, bool debug=false);
-
-	/**
-	 * Initialiser
-	 * Sets up the SPI interface
-	 */
-	void begin();
+	int getRotation();
 
 	/**
 	 * Returns the raw angle directly from the sensor
 	 */
-	int16_t getRawRotation();
+	word getRawRotation();
 
-	/**
-	 * Get the rotation of the sensor relative to the zero position in degrees.
-	 *
-	 * @return {double} between 0 and 360
-	 */
-	double getRotationInDegrees();
-
-	/**
-	 * Get the rotation of the sensor relative to the zero position in radians.
-	 *
-	 * @return {double} between 0 and 2 * PI
-	 */
-	double getRotationInRadians();
 
 	/**
 	 * returns the value of the state register
-	 * @return 16 bit uint16_t containing flags
+	 * @return 16 bit word containing flags
 	 */
-	uint16_t getState();
+	word getState();
 
 	/**
 	 * Print the diagnostic register of the sensor
@@ -102,21 +82,32 @@ public:
 	 * Returns the value used for Automatic Gain Control (Part of diagnostic
 	 * register)
 	 */
-	uint8_t getGain();
+	byte getGain();
 
 	/*
 	 * Get and clear the error register by reading it
 	 */
-	uint16_t getErrors();
+	word getErrors();
 
 	/*
 	 * Set the zero position
 	 */
-	void setZeroPosition(uint16_t arg_position);
+	void setZeroPosition(word arg_position);
 
 	/*
 	 * Returns the current zero position
 	 */
-	uint16_t getZeroPosition();
+	word getZeroPosition();
+
+	/*
+	 * Check if an error has been encountered.
+	 */
+	bool error();
+
+	float getAngle();
+
+	private:
+
+	byte spiCalcEvenParity(word);
 };
 #endif
