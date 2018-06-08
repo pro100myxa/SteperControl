@@ -1,5 +1,8 @@
 #include "AS5048APi.h"
 #include <math.h>
+#include <errno.h>
+#include <stdlib.h>
+#include <string.h>
 
 //#define AS5048A_DEBUG
 
@@ -31,6 +34,7 @@ void AS5048APi::init(){
 	
 	//setup pins
 	pinMode(_cs, OUTPUT);
+	digitalWrite(_cs, LOW);
 
 	//SPI has an internal SPI-device counter, it is possible to call "begin()" from different devices
 	spi.begin(0);
@@ -150,40 +154,24 @@ bool AS5048APi::error(){
  * Takes the address of the register as a 16 bit word
  * Returns the value of the register
  */
-word AS5048APi::read(word registerAddress){
-	word command = 0b0100000000000000; // PAR=0 R/W=R
+uint16_t AS5048APi::read(uint16_t registerAddress){
+	uint16_t command = 0b0100000000000000; // PAR=0 R/W=R
 	command = command | registerAddress;
 
 	//Add a parity bit on the the MSB
-	command |= ((word)spiCalcEvenParity(command)<<15);
-
-	//Split the command into two bytes
-	byte right_byte = command & 0xFF;
-	byte left_byte = ( command >> 8 ) & 0xFF;
+	command |= ((uint16_t)spiCalcEvenParity(command)<<15);
 
 	//SPI - begin transaction
 	//Send the command
-	digitalWrite(_cs, LOW);
-	spi.transfer(left_byte);
-	spi.transfer(right_byte);
-	digitalWrite(_cs,HIGH);
-
-	//Now read the response
-	digitalWrite(_cs, LOW);
-	left_byte = spi.transfer(0x00);
-	right_byte = spi.transfer(0x00);
-	digitalWrite(_cs, HIGH);
-
-	//Check if the error bit is set
-	if (left_byte & 0x40) {
-		errorFlag = true;
-	}
-	else {
-		errorFlag = false;
+	if (wiringPiSPIDataRW(0, (uint8_t*)&command, sizeof(uint16_t)) < 0)
+	{
+		printf("transfer(): Cannot send data: %s\n", strerror(errno));
+		fflush(stdout);
+		abort();
 	}
 
 	//Return the data, stripping the parity and error bits
-	return (( ( left_byte & 0xFF ) << 8 ) | ( right_byte & 0xFF )) & ~0xC000;
+	return (command & ~0xC000);
 }
 
 

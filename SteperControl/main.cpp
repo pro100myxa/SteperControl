@@ -8,27 +8,30 @@
 #include "VL53L0XPi.hpp"
 #include "AS5048APi.h"
 #include "PCA9685Pi.h"
+#include <linux/spi/spidev.h>
+#include <stdlib.h>
+#include <errno.h>
 
 //					WiringPI			Shifter-sheld      
 #define SX_STEP         4       //    		16
 #define SX_DIR          5       // 		    18
 #define SX_END          6       //    		22
-#define SX_RATIO        64
+#define SX_RATIO        50 * 32
 
 #define SY_STEP         11      //   		26
-#define SY_DIR          26      //    		32
+#define SY_DIR          0	    //    		32
 #define SY_END          27  	//			36
-#define SY_RATIO        64
+#define SY_RATIO        50 * 32
 
 #define SZ_STEP         23		//  		33   
 #define SZ_DIR          22      //    		31 
 #define SZ_END          21		//			29
-#define SZ_RATIO        4
+#define SZ_RATIO        50 * 32
 
 #define SJ_STEP         3       //  		15 
 #define SJ_DIR          2       //  		13
-#define SJ_END          30		//			27
-#define SJ_RATIO        4 * 15
+#define SJ_END          26		//			27
+#define SJ_RATIO        1 * 32
 
 
 unsigned char recieved_data[4];
@@ -56,10 +59,10 @@ void setup() {
 
 	wiringPiSetup();
 
-	SX = new HarvbotStepper(SX_STEP, SX_DIR, 10000);
-	SY = new HarvbotStepper(SY_STEP, SY_DIR, 14000);
-	SZ = new HarvbotStepper(SZ_STEP, SZ_DIR, 1000);
-	SJ = new HarvbotStepper(SJ_STEP, SJ_DIR, 5000);
+	SX = new HarvbotStepper(SX_STEP, SX_DIR, 22000);
+	SY = new HarvbotStepper(SY_STEP, SY_DIR, 22000);
+	SZ = new HarvbotStepper(SZ_STEP, SZ_DIR, 22000);
+	SJ = new HarvbotStepper(SJ_STEP, SJ_DIR, 22000);
 
 	//radio.begin(); //активировать модуль
 	//radio.setAutoAck(1);         //режим подтверждения приёма, 1 вкл 0 выкл
@@ -137,11 +140,65 @@ int calcTicks(float impulseMs, int hertz)
 	return (int)(MAX_PWM * impulseMs / cycleMs + 0.5f);
 }
 
+
+#define BITCOUNT(x)     (((BX_(x)+(BX_(x)>>4)) & 0x0F0F0F0F) % 255)
+#define BX_(x)          ((x) - (((x)>>1)&0x77777777) \
+                             - (((x)>>2)&0x33333333) \
+                             - (((x)>>3)&0x11111111))
+
+// SPI commands
+
+#define FLAG_READ 0x4000
+#define CMD_ANGLEDATA 0x3fff
+#define CMD_MAGDATA 0x3ffe
+#define CMD_DIAGDATA 0x3ffd
+#define CMD_NOOP 0x0000
+
+int fd;
+uint16_t sendReceive(uint16_t command, bool verbose = false)
+{
+	if (BITCOUNT(command) % 2)
+		command |= 0x8000;
+
+	unsigned char data[2];
+	data[0] = command >> 8;
+	data[1] = command & 0xff;
+
+	if (verbose)
+		printf("sending %02x%02x   ", data[0], data[1]);
+
+	wiringPiSPIDataRW(fd, data, 2);
+
+	if (verbose)
+		printf("received %02x%02x\n", data[0], data[1]);
+
+	return (data[0] << 8) + data[1];
+}
+
+
 int main(void)
 {
 	//wiringPiSetup();
 	//printf("Program started\n");
 	setup();
+
+	//fd = wiringPiSPISetupMode(0, 500000, SPI_MODE_1);
+	//if (fd == -1)
+	//{
+	//	perror("wiringPiSPISetupMode");
+	//	exit(2);
+	//}
+
+	//while (1)
+	//{
+	//	sendReceive(CMD_ANGLEDATA | FLAG_READ);
+
+	//	// Flush the command with a NOOP and record the reply.
+	//	uint16_t angledata = sendReceive(CMD_NOOP);
+
+	//	cout << ((angledata & 0x3fff) * 360.0f / 0x3fff) << endl;
+	//	delay(300);
+	//}
 
 	//AMS_AS5048BPi mysensor("/dev/i2c-1");
 
@@ -177,14 +234,38 @@ int main(void)
 		delay(2000);
 	}*/
 
-	AS5048APi as5048a(10);
-	as5048a.init();
+	/*pinMode(26, OUTPUT);
 	while (1)
 	{
-		cout << as5048a.getRawRotation() << endl;
-		delay(1000);
+		digitalWrite(26, HIGH);
+		delay(500);
+		digitalWrite(26, LOW);
+		delay(500);
+	}*/
+
+	//pinMode(10, OUTPUT);
+
+	//wiringPiSPISetupMode(0, 1000000, SPI_MODE_1);
+	/*word command = 0;
+	while (1)
+	{
+		command = 0;
+		wiringPiSPIDataRW(0, (byte*)&command, 2);
+
+		command = command & ~0xC000;
+		cout << command << endl;
+		delay(500);
 	}
-	
+*/
+	//AS5048APi as5048a(10);
+	//as5048a.init();
+	//while (1)
+	//{
+	//	//as5048a.getRawRotation();
+	//	cout << as5048a.getRawRotation() << endl;
+	//	delay(500);
+	//}
+	//
 
 	/*int i = 0;
 	unsigned int lastStepTime = micros();
@@ -271,19 +352,20 @@ int main(void)
 		cout << sensor.readRangeContinuousMillimeters() << endl;
 	}*/
 
-	//while (1)
-	//{
-	//	int numberOfSteps = 100;
-	//	//SX->move(-numberOfSteps * SX_RATIO);
-	//	//SX->move(-numberOfSteps * SJ_RATIO);
-	//	SY->move(-numberOfSteps * SY_RATIO);
-	//	//SZ->move(-numberOfSteps * SZ_RATIO);
-	//	runAllEnginesTillPostions();
-	//	//delay(5);
-	//	//SX->move(numberOfSteps * SX_RATIO);
-	//	SY->move(numberOfSteps * SY_RATIO);
-	//	//SZ->move(numberOfSteps * SZ_RATIO);
-	//	runAllEnginesTillPostions();
+	/*while (1)
+	{*/
+		int numberOfSteps = 20;
+		SX->move(-numberOfSteps * SX_RATIO);
+		SY->move(-numberOfSteps * SY_RATIO);
+		SZ->move(-numberOfSteps / 2 * SZ_RATIO);
+		SJ->move(-numberOfSteps * 30 * SJ_RATIO);
+		runAllEnginesTillPostions();
+		//delay(5);
+		SX->move(numberOfSteps * SX_RATIO);
+		SY->move(numberOfSteps * SY_RATIO);
+		SZ->move(numberOfSteps / 2 * SZ_RATIO);
+		SJ->move(numberOfSteps * 30 * SJ_RATIO);
+		runAllEnginesTillPostions();
 	//}
 
 	/*while (1)
