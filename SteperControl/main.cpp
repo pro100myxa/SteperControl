@@ -342,30 +342,39 @@ int main(void)
 		cout << "x=" << x << " y=" << y << " z=" << z << endl;
 	}*/
 
-	/*VL53L0XPi sensor;
+	/*int t = wiringPiI2CSetupInterface("/dev/i2c-10", 0x70);
+	wiringPiI2CWriteReg8(t, 0x04, 1);*/
+
+	VL53L0XPi sensor;
 	sensor.init();
 	sensor.setTimeout(500);
 	sensor.startContinuous();
 
+	//sensor.setSignalRateLimit(0.1);
+	// increase laser pulse periods (defaults are 14 and 10 PCLKs)
+	//sensor.setVcselPulsePeriod(VcselPeriodPreRange, 18);//default
+	//sensor.setVcselPulsePeriod(VcselPeriodFinalRange, 14);
+	
+
 	while (1)
 	{
 		cout << sensor.readRangeContinuousMillimeters() << endl;
-	}*/
+	}
 
 	/*while (1)
 	{*/
-		int numberOfSteps = 20;
-		SX->move(-numberOfSteps * SX_RATIO);
-		SY->move(-numberOfSteps * SY_RATIO);
-		SZ->move(-numberOfSteps / 2 * SZ_RATIO);
-		SJ->move(-numberOfSteps * 30 * SJ_RATIO);
-		runAllEnginesTillPostions();
-		//delay(5);
-		SX->move(numberOfSteps * SX_RATIO);
-		SY->move(numberOfSteps * SY_RATIO);
-		SZ->move(numberOfSteps / 2 * SZ_RATIO);
-		SJ->move(numberOfSteps * 30 * SJ_RATIO);
-		runAllEnginesTillPostions();
+		//int numberOfSteps = 20;
+		//SX->move(-numberOfSteps * SX_RATIO);
+		//SY->move(-numberOfSteps * SY_RATIO);
+		//SZ->move(-numberOfSteps / 2 * SZ_RATIO);
+		//SJ->move(-numberOfSteps * 30 * SJ_RATIO);
+		//runAllEnginesTillPostions();
+		////delay(5);
+		//SX->move(numberOfSteps * SX_RATIO);
+		//SY->move(numberOfSteps * SY_RATIO);
+		//SZ->move(numberOfSteps / 2 * SZ_RATIO);
+		//SJ->move(numberOfSteps * 30 * SJ_RATIO);
+		//runAllEnginesTillPostions();
 	//}
 
 	/*while (1)

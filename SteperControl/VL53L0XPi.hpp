@@ -16,7 +16,7 @@ class VL53L0XPi {
 	public:
 		/*** Constructors and destructors ***/
 
-		VL53L0XPi(const char* device = "/dev/i2c-1", const int16_t xshutGPIOPin = -1, const uint8_t address = VL53L0X_ADDRESS_DEFAULT);
+		VL53L0XPi(const char* device = "/dev/i2c-5", const int16_t xshutGPIOPin = -1, const uint8_t address = VL53L0X_ADDRESS_DEFAULT);
 
 		/*** Public methods ***/
 
